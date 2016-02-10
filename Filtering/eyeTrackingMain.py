@@ -44,7 +44,7 @@ while(cap.isOpened()):
     threshLevelAdjust = threshLevel + lower_index + 15
     #print('Bi level thresh', threshLevelAdjust)
 
-    struct_el = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(20,20))
+    struct_el = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(25,25))
     frame_open = cv2.morphologyEx(frame_gray, cv2.MORPH_OPEN, struct_el)
     cv2.imshow('open',frame_open)
     # Threshold frame using level obtained from adaptive threshold
