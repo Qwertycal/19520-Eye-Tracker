@@ -15,7 +15,7 @@ def thresholding(img, threshValue):
 
 def getContours(image):
     global mask
-    contours, hierarchy = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    _,contours, hierarchy = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
     cnts = sorted(contours, key = cv2.contourArea, reverse = True)[:10]
     
     

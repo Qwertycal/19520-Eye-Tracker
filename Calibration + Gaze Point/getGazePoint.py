@@ -1,7 +1,8 @@
-a = [4, 2, 6, 2, 5, 5]
-b = [3, 7, 2, 4, 6, 8]
+#Solutions obtained from 'Eye.MOV'
+aOriginal = [576.217396, -24.047559, 1.0915599, -0.221105357, -0.025469321, 0.037511114]
+bOriginal = [995.77047, -1.67122664, 12.67059, 0.018357141, 0.028264854, 0.012302]
 
-def getGazePoint(solutionsA, solutionsB, pupilX, glintX, pupilY, glintY):
+def getGazePoint(solutionsA, solutionsB, pupilX, pupilY, glintX, glintY):
 	"Returns the user's gaze point"
 	
 	#Calculate Delta X and Delta Y
@@ -17,4 +18,4 @@ def getGazePoint(solutionsA, solutionsB, pupilX, glintX, pupilY, glintY):
 	print gazeY
 	return (gazeX, gazeY);
 
-getGazePoint(a, b, 5, 2, 6, 3)
+getGazePoint(aOriginal, bOriginal, 648, 415, 626, 437)

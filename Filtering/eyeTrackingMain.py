@@ -18,7 +18,7 @@ from matplotlib import pyplot as plt
 # Open video capture
 cap = cv2.VideoCapture('Eye.mov')
 i = 0
-	
+
 while(cap.isOpened()):
 
     # Read a frame from feed
