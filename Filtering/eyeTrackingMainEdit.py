@@ -12,6 +12,7 @@ import cv2
 import removeOutliersThresh as outliers
 import bi_level_img_threshold as thresh
 import edgeDetection as edgeDet
+import AllTogetherEdit as ATE
 
 from matplotlib import pyplot as plt
 
@@ -20,20 +21,28 @@ aOriginal = [576.217396, -24.047559, 1.0915599, -0.221105357, -0.025469321, 0.03
 bOriginal = [995.77047, -1.67122664, 12.67059, 0.018357141, 0.028264854, 0.012302]
 
 def getGazePoint(solutionsA, solutionsB, pupilX, pupilY, glintX, glintY):
-	"Returns the user's gaze point"
-	
-	#Calculate Delta X and Delta Y
-	deltaX = pupilX - glintX
-	deltaY = pupilY - glintY
-	
-	#Get X and Y coordinates 
-	gazeX = solutionsA[0] + (solutionsA[1]*deltaX) + (solutionsA[2]*deltaY) + (solutionsA[3]*deltaX*deltaY) + (solutionsA[4]*(deltaX**2)) + (solutionsA[5]*(deltaY**2))
-	
-	gazeY = solutionsB[0] + (solutionsB[1]*deltaX) + (solutionsB[2]*deltaY) + (solutionsB[3]*deltaX*deltaY) + (solutionsB[4]*(deltaX**2)) + (solutionsB[5]*(deltaY**2))
-	
-	print gazeX
-	print gazeY
-	return (gazeX, gazeY);
+    global target
+    #	"Returns the user's gaze point"
+
+    #Calculate Delta X and Delta Y
+    deltaX = pupilX - glintX
+    deltaY = pupilY - glintY
+
+    #Get X and Y coordinates 
+    gazeX = solutionsA[0] + (solutionsA[1]*deltaX) + (solutionsA[2]*deltaY) + (solutionsA[3]*deltaX*deltaY) + (solutionsA[4]*(deltaX**2)) + (solutionsA[5]*(deltaY**2))
+
+    gazeY = solutionsB[0] + (solutionsB[1]*deltaX) + (solutionsB[2]*deltaY) + (solutionsB[3]*deltaX*deltaY) + (solutionsB[4]*(deltaX**2)) + (solutionsB[5]*(deltaY**2))
+
+#    print "i"
+
+    print "%d %d" % (gazeX, gazeY)
+    
+#    target = open('gaze_points.txt', 'a')
+#    target.write("%d %d \n" % (gazeX, gazeY))
+#    target.close()
+
+    #	print gazeY
+    return (gazeX, gazeY);
 
 
 # Open video capture
@@ -41,7 +50,9 @@ cap = cv2.VideoCapture('Eye.mov')
 i = 0
 print(cap)
 print(cap.isOpened())
-	
+
+
+
 while(cap.isOpened()):
 
     # Read a frame from feed
@@ -49,7 +60,7 @@ while(cap.isOpened()):
     # Convert to greyscale frame
     frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     i = i+1
-    print('i ', i)
+#    print('i ', i)
     # Get histogram of frame
     hist_img = cv2.calcHist([frame], [0], None, [256], [0, 256])
     #plt.plot(hist_img)
@@ -69,10 +80,10 @@ while(cap.isOpened()):
 
     struct_el = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(25,25))
     frame_open = cv2.morphologyEx(frame_gray, cv2.MORPH_OPEN, struct_el)
-    cv2.imshow('open',frame_open)
+#    cv2.imshow('open',frame_open)
     # Threshold frame using level obtained from adaptive threshold
     ret,frameBinary = cv2.threshold(frame_open,threshLevelAdjust,255,cv2.THRESH_BINARY)
-    cv2.imshow('binaryOrig',frameBinary)
+#    cv2.imshow('binaryOrig',frameBinary)
 
     # Invert and threshold frame to isolate only glint
     frameInv = np.invert(frame_gray)
@@ -81,7 +92,7 @@ while(cap.isOpened()):
     
     # Edge Detection of binary frame
     cpX,cpY,cp,ccX,ccY,cc = edgeDet.edgeDetectionAlgorithm(frameBinary,frameBinaryInv)
-    print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
+#    print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
     if cpX is None or cpY is None or ccX is None or ccY is None:
         print('pupil or corneal not detected, skipping...')
     else:   
@@ -103,18 +114,21 @@ while(cap.isOpened()):
 
         cv2.imshow('frame detected', frameCopy)
         # Centre points of glint and pupil pass to vector
-        print('Gaze points X and Y:')
-        getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+#        print('Gaze points X and Y:')
+        x, y = getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+        
+        ATE.move_mouse(x,y)
 	
         # Show frames
         #cv2.imshow('frame',frame_gray)
-        cv2.imshow('binary',frameBinary)
+#        cv2.imshow('binary',frameBinary)
         #cv2.imshow('binary inv', frameBinaryInv)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 		
-	print('Gaze point X and Y:')
+#	print('Gaze point X and Y:')
 	getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
 
 cap.release()
+target.close()
 cv2.destroyAllWindows()
