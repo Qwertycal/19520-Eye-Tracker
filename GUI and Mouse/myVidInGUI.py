@@ -1,8 +1,10 @@
 from Tkinter import *
 import cv2
 from PIL import Image, ImageTk
+import pyautogui
 
 width, height = 302, 270
+screenwidth, screenheight = pyautogui.size()
 cap = cv2.VideoCapture(0)
 cap.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, height)
@@ -10,6 +12,7 @@ cap.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, height)
 root = Tk()
 root.title("Testing Mode")
 root.bind('<Escape>', lambda e: root.quit())
+root.attributes("-fullscreen", True)
 
 #Create Frame
 mainFrame = Frame(root)
