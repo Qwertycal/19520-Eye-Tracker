@@ -11,15 +11,15 @@ def bi_level_img_threshold( hist ):
 	#start and end index of the histogram
 	I_s = 0
 	I_e = len(hist)-1
-	print('I_e ', I_e, 'I_m ', (I_s+I_e)/2)
-	print('hist [Ie]', hist[I_e])
+	#print('I_e ', I_e, 'I_m ', (I_s+I_e)/2)
+	#print('hist [Ie]', hist[I_e])
 	# starting point: get right and left weights of histogram and
 	# determine the midpoint base triangle
 
 	I_m = (I_s+I_e)/2
 	W_l = np.sum(hist[I_s : I_m])  
 	W_r = np.sum(hist[I_m+1 : I_e])
-	print('W_l ', W_l, 'W_r ', W_r)
+	#print('W_l ', W_l, 'W_r ', W_r)
 
 	while (I_s != I_e):
 		if (W_r > W_l):
