@@ -45,25 +45,32 @@ def getContours(image):
 def getContoursCorneal(image):
     global mask
     _,contours, hierarchy = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    cnts = sorted(contours, key = cv2.contourArea, reverse = True)[:10]
-    
+    cnts = sorted(contours, key = cv2.contourArea, reverse = True)[:len(contours)]
     
     mainContour = None
     mainMoments = None
     contourCentreX = None
     contourCentreY = None
+    contourList = []
     
     maxArea = 0.0
     #    print " "
     for c in cnts:
         area = cv2.contourArea(c)
-        print area
-        if area > maxArea and area < 150: #ensure the correct contour is detected 15000
+        
+        M = cv2.moments(c)
+        if area > maxArea and area < 150 and abs(cpX - int(M['m10']/M['m00'])) < 40 and abs(cpY - int(M['m01']/M['m00'])) < 70 : #ensure the correct contour is detected 15000
+            contourList.append(c)
             maxArea = area
             mainContour = c
             M = cv2.moments(c)
             contourCentreX = int(M['m10']/M['m00'])
             contourCentreY = int(M['m01']/M['m00'])
+
+    contourImg = np.zeros((470,620),np.uint8)
+    contourImg = cv2.cvtColor(contourImg, cv2.COLOR_GRAY2BGR)
+    cv2.drawContours(contourImg,contourList,-1,(0,0,255),3)
+    cv2.imshow('contourImg',contourImg)
 
 #    if mainContour is None:
 #        print "pupil contour is none"
@@ -76,6 +83,8 @@ def getContoursCorneal(image):
 def edgeDetectionAlgorithm(pupilThreshold, cornealThreshold):
     global isPupilDetected
     global isCornealDetected
+    global cpX
+    global cpY
 
     cpX = None
     cpY = None

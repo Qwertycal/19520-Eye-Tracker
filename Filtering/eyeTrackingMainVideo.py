@@ -50,15 +50,20 @@ def getGazePoint(solutionsA, solutionsB, pupilX, pupilY, glintX, glintY):
 
 
 # Open video capture
-cap = cv2.VideoCapture('Eye.mov')
+#cap = cv2.VideoCapture('Eye.mov')
+cap = cv2.VideoCapture('Yousif Eye.mov')
+#cap = cv2.VideoCapture('/Users/colinmcnicol/Yousif Eye.mov')
 i = 0
 
 while(cap.isOpened()):
 
     # Read a frame from feed
     ret, frame = cap.read()
+    print frame.shape
+    frame = frame[100:570, 370:1000]
     # Convert to greyscale frame
     frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    print frame_gray.shape
     i = i+1
     print('i ', i)
     # Get histogram of frame
@@ -104,28 +109,28 @@ while(cap.isOpened()):
     frameInv = np.invert(frame_gray)
 
     ret,frameBinaryInv = cv2.threshold(frameInv,30,255,cv2.THRESH_BINARY_INV)
-    
+
     # Edge Detection of binary frame
     cpX,cpY,cp,ccX,ccY,cc = edgeDet.edgeDetectionAlgorithm(frameBinary,frameBinaryInv)
     print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
     if cpX is None or cpY is None or ccX is None or ccY is None:
         print('pupil or corneal not detected, skipping...')
-    elif abs(cpX - ccX) > 200 or abs(cpY - ccY) > 200:
+    elif abs(cpX - ccX) > 40 or abs(cpY - ccY) > 70:
         print('pupil and corneal are too far apart, skipping...')
     else:
         print('Delta X: %d  Delta Y: %d' % (abs(cpX - ccX),abs(cpY - ccY)) )
         # Ellipse Fitting
         frameCopy = frame.copy()
-    
+
         #draw pupil centre
         cv2.circle(frameCopy, (cpX,cpY),3,(0,255,0),-1)
         
         #draw pupil circumference
         cv2.drawContours(frameCopy,cp,-1,(0,0,255),3)
-    
+
         #draw corneal centre
         cv2.circle(frameCopy, (ccX,ccY),3,(0,255,0),-1)
-    
+
         #draw corneal circumference
         cv2.drawContours(frameCopy,cc,-1,(0,0,255),3)
 
@@ -134,10 +139,10 @@ while(cap.isOpened()):
         
         # Centre points of glint and pupil pass to vector
         x, y = getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-    
+
 
         # Coordinates on screen
-        ATE.move_mouse(x,y)
+    #        ATE.move_mouse(x,y)
 
 
 
