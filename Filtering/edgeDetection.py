@@ -42,6 +42,35 @@ def getContours(image):
     return contourCentreX, contourCentreY, mainContour
 
 
+def getContoursCorneal(image):
+    global mask
+    _,contours, hierarchy = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    cnts = sorted(contours, key = cv2.contourArea, reverse = True)[:10]
+    
+    
+    mainContour = None
+    mainMoments = None
+    contourCentreX = None
+    contourCentreY = None
+    
+    maxArea = 0.0
+    #    print " "
+    for c in cnts:
+        area = cv2.contourArea(c)
+        print area
+        if area > maxArea and area < 150: #ensure the correct contour is detected 15000
+            maxArea = area
+            mainContour = c
+            M = cv2.moments(c)
+            contourCentreX = int(M['m10']/M['m00'])
+            contourCentreY = int(M['m01']/M['m00'])
+
+#    if mainContour is None:
+#        print "pupil contour is none"
+
+    return contourCentreX, contourCentreY, mainContour
+
+
 
 #input is 2 thresholded images. 1.for pupil 2. for corneal
 def edgeDetectionAlgorithm(pupilThreshold, cornealThreshold):
@@ -72,7 +101,7 @@ def edgeDetectionAlgorithm(pupilThreshold, cornealThreshold):
         #--------------------- Detect corneal -----------------#
         
         # Need thresholded image for corneal detection
-        ccX, ccY, cc = getContours(cornealThreshold)
+        ccX, ccY, cc = getContoursCorneal(cornealThreshold)
 #        print "corneal values"
 #        print ccX
 #        print ccY
