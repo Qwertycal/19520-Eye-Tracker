@@ -14,6 +14,7 @@ import bi_level_img_threshold as thresh
 import edgeDetection as edgeDet
 import AllTogetherEdit as ATE
 import getGazePoint as GGP
+import imgThreshold
 
 from matplotlib import pyplot as plt
 
@@ -31,41 +32,11 @@ while(cap.isOpened()):
 
     # Read a frame from feed
     ret, frame = cap.read()
-    # Convert to greyscale frame
-    frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    i = i+1
-#    print('i ', i)
-    # Get histogram of frame
-    hist_img = cv2.calcHist([frame], [0], None, [256], [0, 256])
-    #plt.plot(hist_img)
-    #plt.show()
-
-    # Pass frame to histogram adjustment to remove ouliers
-    hist_no_outliers, lower_index = outliers.removeOutliersThresh(hist_img)
-    #plt.plot(hist_no_outliers)
-    #plt.show()
-
-    # Pass histogram to adaptive thresholding to determine level
-    threshLevel = thresh.bi_level_img_threshold(hist_no_outliers)
-
-    # Adjust start index of hist and add manual level adjustment
-    threshLevelAdjust = threshLevel + lower_index + 15
-    #print('Bi level thresh', threshLevelAdjust)
-
-    struct_el = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(25,25))
-    frame_open = cv2.morphologyEx(frame_gray, cv2.MORPH_OPEN, struct_el)
-#    cv2.imshow('open',frame_open)
-    # Threshold frame using level obtained from adaptive threshold
-    ret,frameBinary = cv2.threshold(frame_open,threshLevelAdjust,255,cv2.THRESH_BINARY)
-#    cv2.imshow('binaryOrig',frameBinary)
-
-    # Invert and threshold frame to isolate only glint
-    frameInv = np.invert(frame_gray)
-
-    ret,frameBinaryInv = cv2.threshold(frameInv,30,255,cv2.THRESH_BINARY_INV)
+    
+    threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
     
     # Edge Detection of binary frame
-    cpX,cpY,cp,ccX,ccY,cc = edgeDet.edgeDetectionAlgorithm(frameBinary,frameBinaryInv)
+    cpX,cpY,cp,ccX,ccY,cc = edgeDet.edgeDetectionAlgorithm(threshPupil, threshGlint)
 #    print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
     if cpX is None or cpY is None or ccX is None or ccY is None:
         print('pupil or corneal not detected, skipping...')
