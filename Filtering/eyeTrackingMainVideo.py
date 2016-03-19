@@ -12,6 +12,7 @@ import cv2
 import removeOutliersThresh as outliers
 import bi_level_img_threshold as thresh
 import edgeDetection as edgeDet
+import imgThresholdVideo
 import AllTogetherEdit as ATE
 
 from matplotlib import pyplot as plt
@@ -50,8 +51,8 @@ def getGazePoint(solutionsA, solutionsB, pupilX, pupilY, glintX, glintY):
 
 
 # Open video capture
-#cap = cv2.VideoCapture('Eye.mov')
-cap = cv2.VideoCapture('Yousif Eye.mov')
+cap = cv2.VideoCapture('Eye.mov')
+#cap = cv2.VideoCapture('Yousif Eye.mov')
 #cap = cv2.VideoCapture('/Users/colinmcnicol/Yousif Eye.mov')
 i = 0
 
@@ -59,59 +60,16 @@ while(cap.isOpened()):
 
     # Read a frame from feed
     ret, frame = cap.read()
-    print frame.shape
-    frame = frame[100:570, 370:1000]
-    # Convert to greyscale frame
-    frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    print frame_gray.shape
-    i = i+1
-    print('i ', i)
-    # Get histogram of frame
-    #hist_img = cv2.calcHist([frame], [0], None, [256], [0, 256])
-    #plt.plot(hist_img)
-    #plt.show()
-    cv2.imshow('frame_gray',frame_gray)
-    #Equalise image to improve constrast - stretch histogram
-    frame_eq = cv2.equalizeHist(frame_gray)
-    cv2.imshow('frame_equalized',frame_eq)
-    # more efficient than calcHist and eliminates memory error
-    hist_img = np.bincount(frame_eq.flatten())
-    #hist_img = cv2.calcHist([frame_eq], [0], None, [256], [0, 256])
-    # normalise to 1
-    hist_img = np.divide(hist_img, float(max(hist_img)))
+    #print frame.shape
+    #frame = frame[100:570, 370:1000]
+    #print frame_gray.shape
 
-    #plt.plot(hist_img)
-    #plt.show()
-
-    # Pass frame to histogram adjustment to remove ouliers
-    #hist_no_outliers, lower_index = outliers.removeOutliersThresh(hist_img)
-    #plt.plot(hist_no_outliers)
-    #plt.show()
-
-    # Pass histogram to adaptive thresholding to determine level
-    #threshLevel = thresh.bi_level_img_threshold(hist_img)
-
-    # Adjust start index of hist and add manual level adjustment
-    # Manually set threshold for video
-    threshLevelAdjust = 43 #threshLevel #+ lower_index + 15
-    print('Bi level thresh', threshLevelAdjust)
-
-    struct_el = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(28,28))
-    frame_open = cv2.morphologyEx(frame_gray, cv2.MORPH_OPEN, struct_el)
-    #cv2.imshow('open',frame_open)
-
-    # Threshold frame using level obtained from adaptive threshold
-    ret,frameBinary = cv2.threshold(frame_open,threshLevelAdjust,255,cv2.THRESH_BINARY)
-    cv2.namedWindow('binaryOrig',cv2.WINDOW_NORMAL)
-    cv2.imshow('binaryOrig',frameBinary)
-
-    # Invert and threshold frame to isolate only glint
-    frameInv = np.invert(frame_gray)
-
-    ret,frameBinaryInv = cv2.threshold(frameInv,30,255,cv2.THRESH_BINARY_INV)
+    # Threshold image for pupil and glint separately
+    threshPupil, threshGlint = imgThresholdVideo.imgThresholdVideo(frame)
+    
 
     # Edge Detection of binary frame
-    cpX,cpY,cp,ccX,ccY,cc = edgeDet.edgeDetectionAlgorithm(frameBinary,frameBinaryInv)
+    cpX,cpY,cp,ccX,ccY,cc = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
     print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
     if cpX is None or cpY is None or ccX is None or ccY is None:
         print('pupil or corneal not detected, skipping...')
