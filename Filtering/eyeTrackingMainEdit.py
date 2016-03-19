@@ -12,8 +12,8 @@ import cv2
 import removeOutliersThresh as outliers
 import bi_level_img_threshold as thresh
 import edgeDetection as edgeDet
-import AllTogetherEdit as ATE
-import getGazePoint as GGP
+#import AllTogetherEdit as ATE
+#import getGazePoint as GGP
 import imgThreshold
 
 from matplotlib import pyplot as plt
@@ -23,7 +23,7 @@ aOriginal = [576.217396, -24.047559, 1.0915599, -0.221105357, -0.025469321, 0.03
 bOriginal = [995.77047, -1.67122664, 12.67059, 0.018357141, 0.028264854, 0.012302]
 
 # Open video capture
-cap = cv2.VideoCapture('Eye.mov')
+cap = cv2.VideoCapture(1)
 i = 0
 print(cap)
 print(cap.isOpened())
@@ -60,9 +60,9 @@ while(cap.isOpened()):
         cv2.imshow('frame detected', frameCopy)
         # Centre points of glint and pupil pass to vector
         print('Gaze points X and Y:')
-        x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+        #x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
         
-        ATE.move_mouse(x,y)
+        #ATE.move_mouse(x,y)
 	
         # Show frames
         #cv2.imshow('frame',frame_gray)
@@ -72,5 +72,5 @@ while(cap.isOpened()):
         break
 
 cap.release()
-target.close()
+#target.close()
 cv2.destroyAllWindows()

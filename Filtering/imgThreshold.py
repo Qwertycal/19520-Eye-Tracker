@@ -35,22 +35,24 @@ def imgThreshold(frame):
     #plt.show()
 
     # Pass frame to histogram adjustment to remove ouliers - if necessary
-    hist_no_outliers, lower_index = outliers.removeOutliersThresh(hist_img)
-    print('hist_short',len(hist_no_outliers))
+    #hist_no_outliers, lower_index = outliers.removeOutliersThresh(hist_img)
+    #print('hist_short',len(hist_no_outliers))
     #plt.plot(hist_no_outliers)
     #plt.show()
 
     # Pass histogram to adaptive thresholding to determine level
-    threshLevel = thresh.bi_level_img_threshold(hist_no_outliers)
+    threshLevel = thresh.bi_level_img_threshold(hist_img)
+
+    if(threshLevel > 100):
+        threshLevel = 45
 
     # Adjust start index of hist and add manual level adjustment
-    threshLevelAdjust = threshLevel + lower_index
+    #threshLevelAdjust = threshLevel + lower_index
     #print('Bi level thresh', threshLevelAdjust)
 
 
     # Threshold frame using level obtained from adaptive threshold
-    ret,threshPupil = cv2.threshold(frame_open,threshLevelAdjust,255,cv2.THRESH_BINARY)
-    cv2.namedWindow('thresh pipil',cv2.WINDOW_NORMAL)
+    ret,threshPupil = cv2.threshold(frame_open,threshLevel,255,cv2.THRESH_BINARY)
     cv2.imshow('thresh pupil',threshPupil)
    
 
@@ -58,8 +60,7 @@ def imgThreshold(frame):
     #frameInv = np.invert(frame_gray)
     #cv2.imshow('frameInv',frameInv)
 
-    ret,threshGlint = cv2.threshold(frame_gray,225,255,cv2.THRESH_BINARY_INV)
-    cv2.namedWindow('thresh glint',cv2.WINDOW_NORMAL)
+    ret,threshGlint = cv2.threshold(frame_gray,200,255,cv2.THRESH_BINARY_INV)
     cv2.imshow('thresh glint',threshGlint)
 
     return threshPupil, threshGlint
