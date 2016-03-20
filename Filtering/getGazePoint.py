@@ -10,6 +10,12 @@ def getGazePoint(solutionsA, solutionsB, pupilX, pupilY, glintX, glintY):
 	
 	gazeY = solutionsB[0] + (solutionsB[1]*deltaX) + (solutionsB[2]*deltaY) + (solutionsB[3]*deltaX*deltaY) + (solutionsB[4]*(deltaX**2)) + (solutionsB[5]*(deltaY**2))
 	
-	print gazeX
-	print gazeY
+    print "%d %d" % (gazeX, gazeY)
+    
+    #target = open('gaze_points.txt', 'a')
+    #target.write("%d %d \n" % (gazeX, gazeY))
+    #target.close()
+
+    #print gazeY
+    
 	return (gazeX, gazeY);
