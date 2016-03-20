@@ -47,4 +47,9 @@ def bi_level_img_threshold( hist ):
 		I_m = 45
 	#I_s and I_e get closer until they are equal to I_m
 	#I_m is the optimal threshold i.e. depression between left and right side
+
+	#for overshot threshold level, choose manual
+    if(I_m > 100):
+        I_m = 45
+        
 	return I_m
