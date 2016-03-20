@@ -33,8 +33,8 @@ while(cap.isOpened()):
 
     # Read a frame from feed
     ret, frame = cap.read()
-    #print frame.shape
-    #frame = frame[100:570, 370:1000]
+#    print frame.shape
+#    frame = frame[100:570, 370:1000]
     #print frame_gray.shape
 
     # Threshold image for pupil and glint separately
