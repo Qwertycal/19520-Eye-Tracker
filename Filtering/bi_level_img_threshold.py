@@ -6,9 +6,9 @@
 import numpy as np
 
 def bi_level_img_threshold( hist ):
-   	hist = hist.flatten()
+    hist = hist.flatten()
 	#print('len hist ', len(hist))
-	if(len(hist)>0):
+    if(len(hist)>0):
 		#start and end index of the histogram
 		I_s = 0
 		I_e = len(hist)-1
@@ -43,7 +43,7 @@ def bi_level_img_threshold( hist ):
 					W_l = W_l + hist[I_m+1]
 					W_r = W_r - hist[I_m+1]
 					I_m = I_m + 1
-	else:
+    else:
 		I_m = 45
 	#I_s and I_e get closer until they are equal to I_m
 	#I_m is the optimal threshold i.e. depression between left and right side

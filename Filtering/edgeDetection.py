@@ -19,13 +19,17 @@ def getContours(image):
 #    print " "
     for c in cnts:
         area = cv2.contourArea(c)
-#        print area
-        if area > maxArea and area < 3000: #ensure the correct contour is detected 15000
-            maxArea = area
-            mainContour = c
-            M = cv2.moments(c)
-            contourCentreX = int(M['m10']/M['m00'])
-            contourCentreY = int(M['m01']/M['m00'])
+#        print "pupil area: %d" % area
+        if area > maxArea and area < 3000: #ensure the correct contour is detected
+            M_2 = cv2.moments(c)
+            cX = int(M_2['m10']/M_2['m00'])
+            cY = int(M_2['m01']/M_2['m00'])
+            if cX >= topLeftCornerX and cY >= topLeftCornerY and cX <= bottomRightCornerX and cY <= bottomRightCornerY:
+                maxArea = area
+                mainContour = c
+                M = cv2.moments(c)
+                contourCentreX = int(M['m10']/M['m00'])
+                contourCentreY = int(M['m01']/M['m00'])
 
 #    if mainContour is None:
 #        print "pupil contour is none"
@@ -49,9 +53,15 @@ def getContoursCorneal(image):
     #    print " "
     for c in cnts:
         area = cv2.contourArea(c)
-        
         M = cv2.moments(c)
-        if area > maxArea and area < 150 and abs(cpX - int(M['m10']/M['m00'])) < 40 and abs(cpY - int(M['m01']/M['m00'])) < 70 : #ensure the correct contour is detected 15000
+        
+        if M['m00'] == 0:
+            M['m00'] = 1
+        
+        cX = int(M['m10']/M['m00'])
+        cY = int(M['m01']/M['m00'])
+        
+        if area > maxArea and area < 150 and abs(cpX - cX) < 150 and abs(cpY - cY) < 150 : #ensure the correct contour is detected 15000
             contourList.append(c)
             maxArea = area
             mainContour = c
@@ -64,9 +74,6 @@ def getContoursCorneal(image):
     cv2.drawContours(contourImg,contourList,-1,(0,0,255),3)
     cv2.imshow('contourImg',contourImg)
 
-#    if mainContour is None:
-#        print "pupil contour is none"
-
     return contourCentreX, contourCentreY, mainContour
 
 
@@ -77,6 +84,10 @@ def edgeDetectionAlgorithm(pupilThreshold, cornealThreshold):
     global isCornealDetected
     global cpX
     global cpY
+    global topLeftCornerX
+    global topLeftCornerY
+    global bottomRightCornerX
+    global bottomRightCornerY
 
 
     cpX = None
@@ -105,9 +116,6 @@ def edgeDetectionAlgorithm(pupilThreshold, cornealThreshold):
 
     if cpX is None or cpY is None:  #check is pupil has been detected
         isPupilDetected = 1
-        print "pupil not detected"
-        cv2.waitKey(1)
-    elif cpX < topLeftCornerX or cpY < topLeftCornerY or cpX > bottomRightCornerX or cpY > bottomRightCornerY:
         print "pupil not detected"
         cv2.waitKey(1)
     else:
