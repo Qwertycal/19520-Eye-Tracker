@@ -12,18 +12,27 @@ import cv2
 import removeOutliersThresh as outliers
 import bi_level_img_threshold as thresh
 import edgeDetection as edgeDet
-#import AllTogetherEdit as ATE
-#import getGazePoint as GGP
+import AllTogetherEdit as ATE
+import getGazePoint as GGP
 import imgThreshold
+import getCalibrationUnknowns as GCU
 
 from matplotlib import pyplot as plt
 
 #Solutions obtained from 'Eye.MOV'
-aOriginal = [402.84482, -20.6854858, -7.40409644, -0.139460511, 
--0.0316878766, -0.0595331782]
-bOriginal = [496.58251, 16.006643, 8.2113024, 0.2931556,
-0.27153592, 0.075294837]
+#aOriginal = [402.84482, -20.6854858, -7.40409644, -0.139460511, 
+#-0.0316878766, -0.0595331782]
+#bOriginal = [496.58251, 16.006643, 8.2113024, 0.2931556,
+#0.27153592, 0.075294837]
 
+pupilX = [275, 264, 244, 280, 261, 239, 277, 259, 240]
+pupilY = [178, 178, 178, 183, 183, 182, 188, 188, 190]
+glintX = [278, 273, 264, 281, 272, 262, 279, 270, 259]
+glintY = [190, 188, 190, 191, 189, 190, 190, 191, 192]
+calibrationX = [213, 639, 1065, 213, 639, 1065, 213, 639, 1065]
+calibrationY = [133, 133, 133, 399, 399, 399, 665, 665, 665]
+
+aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, calibrationX, calibrationY)
 
 # Open video capture
 cap = cv2.VideoCapture(1)
@@ -65,9 +74,9 @@ while(cap.isOpened()):
         print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
         # Centre points of glint and pupil pass to vector
 #        print('Gaze points X and Y:')
-        #x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-        
-        #ATE.move_mouse(x,y)
+        x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+    
+        ATE.move_mouse(x,y)
 	
         # Show frames
         #cv2.imshow('frame',frame_gray)
