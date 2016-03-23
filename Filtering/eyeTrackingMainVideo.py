@@ -42,7 +42,7 @@ while(cap.isOpened()):
     
 
     # Edge Detection of binary frame
-    cpX,cpY,cp,ccX,ccY,cc = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+    cpX,cpY,cp,ccX,ccY,cc = edgeDet.edgeDetectionAlgorithmVideo(threshPupil,threshGlint)
     print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
     if cpX is None or cpY is None or ccX is None or ccY is None:
         print('pupil or corneal not detected, skipping...')

@@ -35,6 +35,8 @@ def imgThreshold(frame):
     # Pass histogram to adaptive thresholding to determine level
 
     threshLevel = thresh.bi_level_img_threshold(hist_img)
+    if(threshLevel > 100):
+        threshLevel = 45
 
     # Adjust start index of hist and add manual level adjustment
     #threshLevelAdjust = threshLevel + lower_index
@@ -42,6 +44,7 @@ def imgThreshold(frame):
 
 
     # Threshold frame using level obtained from adaptive threshold
+    print ("thresh level %d " % threshLevel)
     ret,threshPupil = cv2.threshold(frame_open,threshLevel,255,cv2.THRESH_BINARY)
     cv2.imshow('thresh pupil',threshPupil)
    

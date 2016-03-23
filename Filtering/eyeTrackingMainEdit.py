@@ -24,6 +24,7 @@ aOriginal = [402.84482, -20.6854858, -7.40409644, -0.139460511,
 bOriginal = [496.58251, 16.006643, 8.2113024, 0.2931556,
 0.27153592, 0.075294837]
 
+
 # Open video capture
 cap = cv2.VideoCapture(1)
 i = 0
@@ -60,8 +61,10 @@ while(cap.isOpened()):
     
 
         cv2.imshow('frame detected', frameCopy)
+
+        print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
         # Centre points of glint and pupil pass to vector
-        print('Gaze points X and Y:')
+#        print('Gaze points X and Y:')
         #x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
         
         #ATE.move_mouse(x,y)
