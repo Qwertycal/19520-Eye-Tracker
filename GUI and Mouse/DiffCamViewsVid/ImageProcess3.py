@@ -18,8 +18,8 @@ import eyeTrackingMainEdited as etMain
 width, height = 302, 270
 screenwidth, screenheight = pyautogui.size()
 cap = cv2.VideoCapture('Eye.mov')
-cap.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, width)
-cap.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, height)
+cap.set(CV_CAP_PROP_FRAME_WIDTH, width)
+cap.set(CCV_CAP_PROP_FRAME_HEIGHT, height)
 
 print(str(screenwidth) + ', ' + str(screenheight))
 root = Tk()
