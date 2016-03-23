@@ -19,8 +19,10 @@ import imgThreshold
 from matplotlib import pyplot as plt
 
 #Solutions obtained from 'Eye.MOV'
-aOriginal = [576.217396, -24.047559, 1.0915599, -0.221105357, -0.025469321, 0.037511114]
-bOriginal = [995.77047, -1.67122664, 12.67059, 0.018357141, 0.028264854, 0.012302]
+aOriginal = [402.84482, -20.6854858, -7.40409644, -0.139460511, 
+-0.0316878766, -0.0595331782]
+bOriginal = [496.58251, 16.006643, 8.2113024, 0.2931556,
+0.27153592, 0.075294837]
 
 # Open video capture
 cap = cv2.VideoCapture(1)
