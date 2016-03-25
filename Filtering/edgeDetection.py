@@ -171,6 +171,7 @@ def edgeDetectionAlgorithm(pupilThreshold, cornealThreshold):
     
     isPupilDetected = 0
     isCornealDetected = 0
+    successfullyDetected = True
     
     edgeLimit = 4
     
@@ -187,7 +188,7 @@ def edgeDetectionAlgorithm(pupilThreshold, cornealThreshold):
     
 
     if cpX is None or cpY is None:  #check is pupil has been detected
-        isPupilDetected = 1
+        successfullyDetected = False
         print "pupil not detected"
         cv2.waitKey(1)
     else:
@@ -201,11 +202,11 @@ def edgeDetectionAlgorithm(pupilThreshold, cornealThreshold):
 
 
         if ccX is None or ccY is None:  #check is pupil has been detected
-            isCornealDetected = 1
+            successfullyDetected = False
             print "corneal not detected"
             cv2.waitKey(1)
 
-    return cpX,cpY,cp,ccX,ccY,cc
+    return cpX,cpY,cp,ccX,ccY,cc,successfullyDetected
 
 
 #input is 2 thresholded images. 1.for pupil 2. for corneal
@@ -229,6 +230,7 @@ def edgeDetectionAlgorithmVideo(pupilThreshold, cornealThreshold):
     
     isPupilDetected = 0
     isCornealDetected = 0
+    successfullyDetected = True
     
     edgeLimit = 4
     
@@ -244,8 +246,8 @@ def edgeDetectionAlgorithmVideo(pupilThreshold, cornealThreshold):
     cpX, cpY, cp = getContoursVideo(pupilThreshold)
     
     
-    if cpX is None or cpY is None:  #check is pupil has been detected
-        isPupilDetected = 1
+    if cpX is None or cpY is None:  #check if pupil has been detected
+        successfullyDetected = False
         print "pupil not detected"
         cv2.waitKey(1)
     else:
@@ -258,10 +260,10 @@ def edgeDetectionAlgorithmVideo(pupilThreshold, cornealThreshold):
         #        print ccY
         
         
-        if ccX is None or ccY is None:  #check is pupil has been detected
-            isCornealDetected = 1
+        if ccX is None or ccY is None:  #check if glint has been detected
+            successfullyDetected = False
             print "corneal not detected"
             cv2.waitKey(1)
 
-    return cpX,cpY,cp,ccX,ccY,cc
+    return cpX,cpY,cp,ccX,ccY,cc,successfullyDetected
 
