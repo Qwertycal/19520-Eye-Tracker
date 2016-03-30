@@ -125,8 +125,9 @@ class MyApp(Tk):
         glintX = []
         glintY = []
         #Set up the buttons and the actions linked to them
+        global i
         i = 0
-        calibrateButton = Button(instructionFrame, text="Start Calibration", command=self.ovalChanger)
+        calibrateButton = Button(instructionFrame, text="Start Calibration", command=self.ovalChange)
         exitButton = Button(instructionFrame, text="Exit", command=self.quitCal)
         calibrateButton.grid(column = 0)
         exitButton.grid(column = 1, row = 0)
@@ -140,7 +141,7 @@ class MyApp(Tk):
         self.ovalChange(0)
     
     #Used to show which circle to look at, by displaying the circle in red
-    def ovalChange(self, i):
+    def ovalChange(self):
         if i > 0:
             prevOval = ovalList[i - 1]
             self.canvas.itemconfigure(prevOval, fill="black")
