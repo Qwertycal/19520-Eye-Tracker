@@ -1,3 +1,8 @@
+#author: Rachel Hutchinson
+#date created: 25th March
+#description: this holds the calibration scrren, when you press the start calibration button
+#each of the 9 calibration dos will light up in turn, this will call the image thresholding
+#and edge detection mehtods
 from Tkinter import *
 import cv2
 import pyautogui
@@ -55,26 +60,26 @@ class MyApp(Tk):
         self.canvas = Canvas(canvasFrame, width = width, height = (height - 100))
         
         #Add the ovals to the canvas, and add each oval to the list
-        self.oval1 = self.canvas.create_oval(x1, y1, (x1 + dotSize), (y1 + dotSize), fill = "grey") #top left
-        ovalList.append(self.oval1)
-        self.oval2 = self.canvas.create_oval(x2, y1, (x2 + dotSize), (y1 + dotSize), fill = "gray") #top middle
-        ovalList.append(self.oval2)
-        self.oval3 = self.canvas.create_oval(x3, y1, (x3 + dotSize), (y1 + dotSize), fill = "gray") #top right
-        ovalList.append(self.oval3)
+        oval1 = self.canvas.create_oval(x1, y1, (x1 + dotSize), (y1 + dotSize), fill = "grey") #top left
+        ovalList.append(oval1)
+        oval2 = self.canvas.create_oval(x2, y1, (x2 + dotSize), (y1 + dotSize), fill = "gray") #top middle
+        ovalList.append(oval2)
+        oval3 = self.canvas.create_oval(x3, y1, (x3 + dotSize), (y1 + dotSize), fill = "gray") #top right
+        ovalList.append(oval3)
         
-        self.oval4 = self.canvas.create_oval(x1, y2, (x1 + dotSize), (y2 + dotSize), fill = "gray") #middle left
-        ovalList.append(self.oval4)
-        self.oval5 = self.canvas.create_oval(x2, y2, (x2 + dotSize), (y2 + dotSize), fill = "gray") #middle middle
-        ovalList.append(self.oval5)
-        self.oval6 = self.canvas.create_oval(x3, y2, (x3 + dotSize), (y2 + dotSize), fill = "gray") #middle right
-        ovalList.append(self.oval6)
+        oval4 = self.canvas.create_oval(x1, y2, (x1 + dotSize), (y2 + dotSize), fill = "gray") #middle left
+        ovalList.append(oval4)
+        oval5 = self.canvas.create_oval(x2, y2, (x2 + dotSize), (y2 + dotSize), fill = "gray") #middle middle
+        ovalList.append(oval5)
+        oval6 = self.canvas.create_oval(x3, y2, (x3 + dotSize), (y2 + dotSize), fill = "gray") #middle right
+        ovalList.append(oval6)
         
-        self.oval7 = self.canvas.create_oval(x1, y3, (x1 + dotSize), (y3 + dotSize), fill = "gray") #bottom left
-        ovalList.append(self.oval7)
-        self.oval8 = self.canvas.create_oval(x2, y3, (x2 + dotSize), (y3 + dotSize), fill = "gray") #bottom middle
-        ovalList.append(self.oval8)
-        self.oval9 = self.canvas.create_oval(x3, y3, (x3 + dotSize), (y3 + dotSize), fill = "gray") #botton right
-        ovalList.append(self.oval9)
+        oval7 = self.canvas.create_oval(x1, y3, (x1 + dotSize), (y3 + dotSize), fill = "gray") #bottom left
+        ovalList.append(oval7)
+        oval8 = self.canvas.create_oval(x2, y3, (x2 + dotSize), (y3 + dotSize), fill = "gray") #bottom middle
+        ovalList.append(oval8)
+        oval9 = self.canvas.create_oval(x3, y3, (x3 + dotSize), (y3 + dotSize), fill = "gray") #botton right
+        ovalList.append(oval9)
         
         canvasFrame.grid()
         instructionFrame.grid(row = 1)
@@ -83,10 +88,14 @@ class MyApp(Tk):
         
         #Set up the buttons and the actions linked to them
         i = 0
-        self.start_button = Button(instructionFrame, text="Start Calibration", command=self.ovalChanger)
-        self.stop_button = Button(instructionFrame, text="Exit", command=self.stop_blinking)
-        self.start_button.grid(column = 0)
-        self.stop_button.grid(column = 1, row = 0)
+        calibrateButton = Button(instructionFrame, text="Start Calibration", command=self.ovalChanger)
+        exitButton = Button(instructionFrame, text="Exit", command=self.quitCal)
+        calibrateButton.grid(column = 0)
+        exitButton.grid(column = 1, row = 0)
+    
+    #Called when exit is pressed
+    def quitCal(self):
+        self.destroy()
     
     #Called when the calibrate button is pressed, simply used to call another funtion
     def ovalChanger(self):
@@ -95,13 +104,20 @@ class MyApp(Tk):
     #Used to show which circle to look at, by displaying the circle in red
     def ovalChange(self, i):
         if i > 0:
-            self.prevOval = ovalList[i - 1]
-            self.canvas.itemconfigure(self.prevOval, fill="black")
+            prevOval = ovalList[i - 1]
+            self.canvas.itemconfigure(prevOval, fill="black")
         if i < (len(ovalList)):
-            self.currentOval = ovalList[i]
-            self.canvas.itemconfigure(self.currentOval, fill="red")
+            currentOval = ovalList[i]
+            self.canvas.itemconfigure(currentOval, fill="red")
         self.canvas.update()
         time.sleep(5)
+        
+        #Call Edge Detection of binary frame
+        ret, frame = cap.read()
+        threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+        cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+        cv2.imwrite('pic{:>05}.png'.format(i), frame)
+        
         if i  < (len(ovalList)):
             j = i + 1
             self.ovalChange(j)
