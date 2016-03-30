@@ -14,6 +14,7 @@ def calibration(pupilX, pupilY, glintX, glintY, calibrationX, calibrationY):
 	#Y differences of glint-pupil vector
     deltaY = [(pupilY[0] - glintY[0]), (pupilY[1] - glintY[1]), (pupilY[2] - glintY[2]), (pupilY[3] - glintY[3]),
     (pupilY[4] - glintY[4]), (pupilY[5] - glintY[5]), (pupilY[6] - glintY[6]), (pupilY[7] - glintY[7]), (pupilY[8] - glintY[8])]
+    
 
 	#Equations matrix
     #2nd order (6 unknowns, 9 equations)
@@ -51,7 +52,5 @@ def calibration(pupilX, pupilY, glintX, glintY, calibrationX, calibrationY):
 	
     return (solutionA[0], solutionB[0]);
 
-calibration([648,516,591,630,542,593,585,546,634], [415,379,355,367,344,334,334,382,320], 
-            [626,560,596,615,571,595,594,571,614], [437,417,407,415,404,399,420,395,405],
-            [136,1228,683,403,937,683,683,937,403], [691,691,384,384,384,230,547,230,230])
+
             
