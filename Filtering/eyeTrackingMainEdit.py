@@ -76,7 +76,7 @@ while(cap.isOpened()):
 #        print('Gaze points X and Y:')
         x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
     
-        ATE.move_mouse(x,y)
+#ATE.move_mouse(x,y)
 	
         # Show frames
         #cv2.imshow('frame',frame_gray)

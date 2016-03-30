@@ -28,7 +28,7 @@ vidWidth = (screenwidth/4)
 vidHeight = (screenheight/4)
 
 #Capture the feed coming from the camera
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, vidWidth)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, vidHeight)
 
@@ -120,13 +120,13 @@ def show_frame():
         cv2.drawContours(frameCopy,cc,-1,(0,0,255),3)
         
         #Code that will hopefully show the detected pupil, if uncommented
-#        if(frameCopy != None):
-#            frameC_resized = cv2.resize(frameCopy, (vidWidth, vidHeight), interpolation = cv2.INTER_AREA)
-#            frameC_resized = cv2.flip(frameC_resized, 1)
-#            img1 = Image.fromarray(frameC_resized)
-#            imgtk1 = ImageTk.PhotoImage(image=img1)
-#            videoStream1.imgtk1 = imgtk1
-#            videoStream1.configure(image=imgtk1)
+        if(frameCopy != None):
+            frameC_resized = cv2.resize(frameCopy, (vidWidth, vidHeight), interpolation = cv2.INTER_AREA)
+            frameC_resized = cv2.flip(frameC_resized, 1)
+            img1 = Image.fromarray(frameC_resized)
+            imgtk1 = ImageTk.PhotoImage(image=img1)
+            videoStream1.imgtk1 = imgtk1
+            videoStream1.configure(image=imgtk1)
 
         # Centre points of glint and pupil pass to vector
         x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)

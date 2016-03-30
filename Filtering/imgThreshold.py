@@ -17,10 +17,10 @@ def imgThreshold(frame):
 
     # Convert to greyscale frame
     frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    cv2.imshow('original',frame_gray)
+    #cv2.imshow('original',frame_gray)
 
     # Create structuring element - disk to remove glint
-    struct_el = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(25,25))
+    struct_el = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(35,35))
     frame_open = cv2.morphologyEx(frame_gray, cv2.MORPH_OPEN, struct_el)
     cv2.imshow('open',frame_open)
 
@@ -35,8 +35,8 @@ def imgThreshold(frame):
     # Pass histogram to adaptive thresholding to determine level
 
     threshLevel = thresh.bi_level_img_threshold(hist_img)
-    if(threshLevel > 100):
-        threshLevel = 45
+        #if(threshLevel > 100):
+    threshLevel = 30
 
     # Adjust start index of hist and add manual level adjustment
     #threshLevelAdjust = threshLevel + lower_index

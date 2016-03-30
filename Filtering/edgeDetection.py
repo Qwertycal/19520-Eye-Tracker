@@ -20,7 +20,7 @@ def getContours(image):
     for c in cnts:
         area = cv2.contourArea(c)
 #        print "pupil area: %d" % area
-        if area > maxArea and area > 600 and area < 3000: #ensure the correct contour is detected
+        if area > maxArea and area > 600 and area < 5000: #ensure the correct contour is detected
             M_2 = cv2.moments(c)
             cX = int(M_2['m10']/M_2['m00'])
             cY = int(M_2['m01']/M_2['m00'])
@@ -94,7 +94,7 @@ def getContoursCorneal(image):
         cX = int(M['m10']/M['m00'])
         cY = int(M['m01']/M['m00'])
         
-        if area > maxArea and area < 150 and abs(cpX - cX) < 30 and abs(cpY - cY) < 30 : #ensure the correct contour is detected 15000
+        if area > maxArea and area < 450 and abs(cpX - cX) < 100 and abs(cpY - cY) < 100 : #ensure the correct contour is detected 15000
             contourList.append(c)
             maxArea = area
             mainContour = c
@@ -232,7 +232,7 @@ def edgeDetectionAlgorithmVideo(pupilThreshold, cornealThreshold):
     isCornealDetected = 0
     successfullyDetected = True
     
-    edgeLimit = 4
+    edgeLimit =8
     
     w,h = pupilThreshold.shape
     
