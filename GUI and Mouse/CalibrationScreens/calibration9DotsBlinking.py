@@ -3,11 +3,24 @@
 #description: this holds the calibration scrren, when you press the start calibration button
 #each of the 9 calibration dos will light up in turn, this will call the image thresholding
 #and edge detection mehtods
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib import pyplot as plt
 from Tkinter import *
-import cv2
+from PIL import Image, ImageTk
 import pyautogui
-import numpy
 import time
+
+import numpy
+import math
+import cv2
+import removeOutliersThresh as outliers
+import bi_level_img_threshold as thresh
+import edgeDetection as edgeDet
+import AllTogetherEdit as ATE
+import getGazePoint as GGP
+import imgThreshold
+import getCalibrationUnknowns as GCU
 
 class MyApp(Tk):
     #Set up GUI
@@ -86,12 +99,29 @@ class MyApp(Tk):
         
         self.canvas.grid()
         
-        #Set up the buttons and the actions linked to them
-        i = 0
-        calibrateButton = Button(instructionFrame, text="Start Calibration", command=self.ovalChanger)
-        exitButton = Button(instructionFrame, text="Exit", command=self.quitCal)
-        calibrateButton.grid(column = 0)
-        exitButton.grid(column = 1, row = 0)
+        screenLocX1 = qWidth/2
+        screenLocX2 = screenLocX1 + qWidth
+        screenLocX3 = screenLocX2 + qWidth
+        
+        screenLocY1 = tHeight/2
+        screenLocY2 = screenLocY1 + tHeight
+        screenLocY3 = screenLocY2 + tHeight
+        
+        global screenCoordinatesX
+        global screenCoordinatesY
+        screenCoordinatesX = [screenLocX1, screenLocX2, screenLocX3,
+                              screenLocX1, screenLocX2, screenLocX3,
+                              screenLocX1, screenLocX2, screenLocX3]
+                              screenCoordinatesY = [screenLocY1, screenLocY1, screenLocY1,
+                                                    screenLocY2, screenLocY2, screenLocY2,
+                                                    screenLocY3, screenLocY3, screenLocY3]
+                              
+                              #Set up the buttons and the actions linked to them
+                              i = 0
+                              calibrateButton = Button(instructionFrame, text="Start Calibration", command=self.ovalChanger)
+                              exitButton = Button(instructionFrame, text="Exit", command=self.quitCal)
+                              calibrateButton.grid(column = 0)
+                              exitButton.grid(column = 1, row = 0)
     
     #Called when exit is pressed
     def quitCal(self):
@@ -103,6 +133,10 @@ class MyApp(Tk):
     
     #Used to show which circle to look at, by displaying the circle in red
     def ovalChange(self, i):
+        pupilX = []
+        pupilY = []
+        glintX = []
+        glintY = []
         if i > 0:
             prevOval = ovalList[i - 1]
             self.canvas.itemconfigure(prevOval, fill="black")
@@ -110,20 +144,47 @@ class MyApp(Tk):
             currentOval = ovalList[i]
             self.canvas.itemconfigure(currentOval, fill="red")
         self.canvas.update()
-        time.sleep(5)
+        time.sleep(3)
         
         #Call Edge Detection of binary frame
-        ret, frame = cap.read()
+        ret, frame = cam.read()
         threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
         cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
-        cv2.imwrite('pic{:>05}.png'.format(i), frame)
-        
+        calIteration = 0
+        while not successfullyDetected:
+            ret, frame = cam.read()
+            threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+            cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+            calIteration += 1
+            #print calIteration
+            if calIteration > 100:
+                self.canvas.itemconfigure(currentOval, fill="orange")
+                self.canvas.update()
+                cv2.imshow('feed',threshPupil)
+        if successfullyDetected:
+            cv2.imwrite('pic{:>05}.png'.format(i), frame)
+            calIteration = 0
+            pupilX.append(cpX)
+            pupilY.append(cpY)
+            glintX.append(ccX)
+            glintY.append(ccY)
+        #print cpX, cpY, ccX, ccY, screenCoordinates[i][0], screenCoordinates[i][1]
+        #save coordinates
+        print i
+        print (len(ovalList))
         if i  < (len(ovalList)):
             j = i + 1
             self.ovalChange(j)
+        
+        if i == (len(ovalList)-1):
+            aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, screenCoordinatesX, screenCoordinatesY)
+            print aOriginal, bOriginal
+            print 'Calibration done'
+            return aOriginal, bOriginal
+
 
 if __name__ == "__main__":
-    cam = cv2.VideoCapture(0)   # 0 -> index of camera
+    cam = cv2.VideoCapture(1)   # 0 -> index of camera
     s, img = cam.read()
     root = MyApp()
     root.mainloop()
