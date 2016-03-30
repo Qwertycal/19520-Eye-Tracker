@@ -94,7 +94,7 @@ def getContoursCorneal(image):
         cX = int(M['m10']/M['m00'])
         cY = int(M['m01']/M['m00'])
         
-        if area > maxArea and area < 450 and abs(cpX - cX) < 100 and abs(cpY - cY) < 100 : #ensure the correct contour is detected 15000
+        if area > maxArea and area < 250 and abs(cpX - cX) < 50 and abs(cpY - cY) < 50 and cY >= cpY: #ensure the correct contour is detected 15000
             contourList.append(c)
             maxArea = area
             mainContour = c

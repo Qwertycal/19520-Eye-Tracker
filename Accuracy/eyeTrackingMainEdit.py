@@ -44,6 +44,8 @@ aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, calibrat
 # Open video capture
 cap = cv2.VideoCapture(1)
 i = 0
+click_count_prev = 0;
+
 #print(cap)
 #print(cap.isOpened())
 
@@ -55,6 +57,9 @@ while(cap.isOpened()):
     ret, frame = cap.read()
     
     threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+    target = open('mouse_click_points.txt', 'a')
+    #target.write("%d %d \n" % (gazeX, gazeY))
+    #target.close()
     
     # Edge Detection of binary frame
     cpX,cpY,cp,ccX,ccY,cc = edgeDet.edgeDetectionAlgorithm(threshPupil, threshGlint)
@@ -83,7 +88,15 @@ while(cap.isOpened()):
         print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
         # Centre points of glint and pupil pass to vector
 #        print('Gaze points X and Y:')
-        x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+        gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+        if callback.click_count == 0:
+            target.write("%d %d %d\n" % (gazeX, gazeY, -1))
+
+        if callback.click_count != click_count_prev:
+            target.write("%d %d %d\n" % (gazeX, gazeY, callback.click_count))
+            click_count_prev = callback.click_count
+        else:
+            target.write("%d %d %d\n" % (gazeX, gazeY, -1))
     
         #ATE.move_mouse(x,y)
 	
@@ -92,6 +105,7 @@ while(cap.isOpened()):
 #        cv2.imshow('binary',frameBinary)
         #cv2.imshow('binary inv', frameBinaryInv)
     if cv2.waitKey(1) & 0xFF == ord('q'):
+        target.close()
         break
 
 cap.release()

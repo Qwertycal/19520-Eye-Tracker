@@ -24,17 +24,17 @@ aOriginal = [576.217396, -24.047559, 1.0915599, -0.221105357, -0.025469321, 0.03
 bOriginal = [995.77047, -1.67122664, 12.67059, 0.018357141, 0.028264854, 0.012302]
 
 # Open video capture
-#cap = cv2.VideoCapture('Eye.mov')
+cap = cv2.VideoCapture('Eye.mov')
 #cap = cv2.VideoCapture('Yousif Eye.mov')
-cap = cv2.VideoCapture('/Users/colinmcnicol/Yousif Eye.mov')
+#cap = cv2.VideoCapture('/Users/colinmcnicol/Yousif Eye.mov')
 i = 0
 
 while(cap.isOpened()):
 
     # Read a frame from feed
     ret, frame = cap.read()
-    print frame.shape
-    frame = frame[100:570, 370:1000]
+#    print frame.shape
+#    frame = frame[100:570, 370:1000]
     #print frame_gray.shape
 
     # Threshold image for pupil and glint separately
