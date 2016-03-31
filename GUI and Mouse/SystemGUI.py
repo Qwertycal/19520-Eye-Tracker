@@ -1,5 +1,9 @@
 from pubsub import pub
 import Tkinter as Tk
+import pyautogui
+
+#Find the screen width & set the approprite size for the feed
+screenwidth, screenheight = pyautogui.size()
 
 ########################################################################
 class StartScreen(object):
@@ -7,9 +11,9 @@ class StartScreen(object):
     #----------------------------------------------------------------------
     def __init__(self, parent):
         """Constructor"""
-        screenwidth = root.winfo_screenwidth()
-        screenheight = root.winfo_screenheight()
-    
+#        screenwidth = root.winfo_screenwidth()
+#        screenheight = root.winfo_screenheight()
+
         w = 400
         h = 200
         x = (screenwidth / 2) - (w / 2)
