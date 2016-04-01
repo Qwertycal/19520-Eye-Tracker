@@ -332,7 +332,7 @@ class UserFrame(Tk.Toplevel):
         #Set up how big the gui window should be, and where it should be positioned on screen
         #Set to be slightly bigger than the video feed, and be positioned in the bottom right of the screen
         w = vidWidth + 4
-        h = vidHeight + 34
+        h = vidHeight + 56
         x = screenwidth - (w + 10)
         y = screenheight - (h + 60)
 
@@ -347,14 +347,18 @@ class UserFrame(Tk.Toplevel):
         global videoStream1
         #Create label for video to go in
         videoStream1 = Tk.Label(self)
+        
+        global infoLabel
+        infoLabel = Tk.Label(self)
 
         #Create buttons
-        recalibrateButton = Tk.Button(buttonFrame, text = "Recalibrate", command = self.recalibrate)
+        recalibrateButton = Tk.Button(buttonFrame, text = "Calibrate", command = self.recalibrate)
         quitButton = Tk.Button(buttonFrame, text = "Quit", command = self.quitCal)
 
         #Put all of the elements into the GUI
-        buttonFrame.grid(row = 1, column = 0, sticky = 'N')
+        buttonFrame.grid(row = 2, column = 0, sticky = 'N')
 
+        infoLabel.grid(row = 1, column = 0)
         videoStream1.grid(row = 0, column = 0)
         recalibrateButton.grid(row = 0, column = 0)
         quitButton.grid(row = 0, column = 1)
@@ -409,11 +413,14 @@ class UserFrame(Tk.Toplevel):
                 videoStream1.imgtk1 = imgtk1
                 videoStream1.configure(image=imgtk1)
 
-            # Centre points of glint and pupil pass to vector
-            x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-    
-            # Coordinates on screen
-            ATE.move_mouse(x,y)
+            if 'aOriginal' in globals() and 'bOriginal' in globals():
+                # Centre points of glint and pupil pass to vector
+                x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+        
+                # Coordinates on screen
+                ATE.move_mouse(x,y)
+            else:
+                infoLabel.configure(text = "You have not calibrated yet, please do so")
     
         videoStream1.after(5, self.show_frame)
 
