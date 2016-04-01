@@ -13,13 +13,16 @@ import csv
 pyautogui.FAILSAFE = False
 speed = 1410
 spaceCount = 0
-cursorClick = 500
-maxMovement = 10
+cursorClick = 1000
+maxMovement = 50
 
 width, height = pyautogui.size() #get the width and height of the screen
 pointsVisited = []
 
 def move_mouse(x1,y1):
+    spaceCount = 0
+    cursorClick = 1000
+    maxMovement = 10
     
     if len(pointsVisited) <=0:
         pyautogui.moveTo((x1,y1), duration=0)
@@ -36,6 +39,29 @@ def move_mouse(x1,y1):
 #        print(dur)
         pyautogui.moveTo((x1,y1), duration=dur)
         pointsVisited.append(pyautogui.position())
+    if len(pointsVisited) > cursorClick:
+        #Look at the last 4th previous move, set a box, 10 pixels wide around the cursors location at this move.
+        lowBound1 = (pointsVisited[pos-cursorClick][0])-maxMovement
+        lowBound2 = (pointsVisited[pos-cursorClick][1])-maxMovement
+        highBound1 = (pointsVisited[pos-cursorClick][0])+maxMovement
+        highBound2 = (pointsVisited[pos-cursorClick][1])+maxMovement
+        spaceCount = 0
+        #For all the moves between the 4th previous move and the current one, check if the cursor has stayed within the bounds, if it has for each then add one to spaceCount
+        for j in range((i-(cursorClick - 1)), (i+1)):
+            #print ('j' + str(j))
+            #print('spaceCount: ' + str(spaceCount))
+            if((lowBound1<= pointsVisited[j][0] <= highBound1) & (lowBound2) <= pointsVisited[j][1] <= (highBound2)):
+                spaceCount += 1
+            else:
+                spaceCount = 0
+    #If there have been 4 consecutive moves in a row within the bounds, then click, and check if there should be a scroll
+    if (spaceCount == cursorClick):
+        print('Click')
+        pyautogui.click()
+        spaceCount = 0
+
+
+
 
 
 
