@@ -401,9 +401,9 @@ class UserFrame(Tk.Toplevel):
         videoStream1.imgtk1 = imgtk1
         videoStream1.configure(image=imgtk1)
         
-        click_down_flag = False
-        click_up_flag = False
-        
+#        click_down_flag = False
+#        click_up_flag = False
+
         #Call the threholding function
         threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
 
@@ -442,17 +442,19 @@ class UserFrame(Tk.Toplevel):
             if 'aOriginal' in globals() and 'bOriginal' in globals():
                 # Centre points of glint and pupil pass to vector
                 gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-        
-        
-                if callback.click_down_flag or callback.click_up_flag:
-                    target.write("%d %d %d\n" % (gazeX, gazeY, 1))
+                   
+                print('Callback click')
+                print callback.click_down_flag
+                if (callback.click_down_flag) or (callback.click_up_flag):
+                    target.write("%d %d %d %d %d\n" % (callback.refPt[0], callback.refPt[1],gazeX, gazeY, 1))
                     print ('Saved to file')
-                    
-                else:
-                    target.write("%d %d %d\n" % (gazeX, gazeY, -1))
-                    print gazeX
-                    print gazeY
-                    print ' '
+                    callback.click_down_flag = False
+                    callback.click_up_flag = False
+
+                elif (not callback.click_down_flag) or (not callback.click_up_flag):
+                    target.write("%s %s %d %d %d\n" % (' ',' ', gazeX, gazeY, -1))
+                    print 'false if entered'
+                
                 
 #                # Coordinates on screen
 #                ATE.move_mouse(gazeX,gazeY)
