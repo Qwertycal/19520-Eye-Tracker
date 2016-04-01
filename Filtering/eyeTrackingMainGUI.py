@@ -12,6 +12,7 @@ import Tkinter as Tk
 from PIL import Image, ImageTk
 import pyautogui
 import time
+import threading
 
 import numpy as np
 import math
@@ -28,6 +29,7 @@ import getCalibrationUnknowns as GCU
 screenwidth, screenheight = pyautogui.size()
 
 cap = cv2.VideoCapture(1)
+capOpen = cap.isOpened()
 
 ########################################################################
 class StartScreen(object):
@@ -50,15 +52,35 @@ class StartScreen(object):
         self.buttonFrame = Tk.Frame(parent, width = w)
         self.buttonFrame.grid(row = 5, rowspan = 1, columnspan = 4, sticky = 'S')
         
-        
+#        global curState
+#        if cap.isOpened():
+#            curState = 'normal'
+#        else:
+#            curState = 'disabled'
+
         welcomeLabel = Tk.Label(self.frame, text = "Welcome!", width = 44)
+        global calibrateButton
         calibrateButton = Tk.Button(self.buttonFrame, text="Calibrate", command=self.openCalFrame)
         quitButton = Tk.Button(self.buttonFrame, text="Quit", command=self.quitScreen)
         welcomeLabel.grid(row = 0, columnspan =4)
         
         calibrateButton.grid(row = 1, column = 2)
         quitButton.grid(row = 1, column = 3)
-    
+
+#        self.getCurState()
+
+#    def getCurState(self):
+#        global curState
+#        thread = threading.Timer(5.0, self.getCurState).start()
+#        cap = cv2.VideoCapture(1)
+#        if cap.isOpened():
+#            curState = 'normal'
+#            thread.stop()
+#        else:
+#            curState = 'disabled'
+#        print curState
+#        calibrateButton.configure(state = curState)
+
     #----------------------------------------------------------------------
     #When the calibrate button is pressed
     def openCalFrame(self):
@@ -303,6 +325,8 @@ class UserFrame(Tk.Toplevel):
 #        calibrationX = [213, 639, 1065, 213, 639, 1065, 213, 639, 1065]
 #        calibrationY = [133, 133, 133, 399, 399, 399, 665, 665, 665]
 #
+#        global aOriginal
+#        global bOriginal
 #        aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, calibrationX, calibrationY)
 
         #Set up how big the gui window should be, and where it should be positioned on screen
