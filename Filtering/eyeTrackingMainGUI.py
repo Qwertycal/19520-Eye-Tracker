@@ -9,6 +9,7 @@ matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
 from pubsub import pub
 import Tkinter as Tk
+import tkMessageBox
 from PIL import Image, ImageTk
 import pyautogui
 import time
@@ -24,6 +25,7 @@ import AllTogetherEdit as ATE
 import getGazePoint as GGP
 import imgThreshold
 import getCalibrationUnknowns as GCU
+import click_callback as callback
 
 #Find the screen width & set the approprite size for the feed
 screenwidth, screenheight = pyautogui.size()
@@ -83,7 +85,17 @@ class StartScreen(object):
 
     #----------------------------------------------------------------------
     #When the calibrate button is pressed
+    def calibrationButton(self):
+        cap = cv2.VideoCapture(1)
+        if cap.isOpened():
+            print 'if true'
+            self.openCalFrame
+        else:
+            if tkMessageBox.askokcancel("No Eyetracker", "The eyetracker is not connected, please connect it."):
+                self.calibrationButton
+    
     def openCalFrame(self):
+        print 'cal screen'
         self.hide()
         subFrame = CalibrationFrame()
     
@@ -312,10 +324,21 @@ class UserFrame(Tk.Toplevel):
         vidHeight = (screenheight/4)
 
         print 'user frame opned'
+        dots = cv2.imread('dots.png')
+        cv2.namedWindow('click space')
+        cv2.setMouseCallback("click space", callback.click_callback)
+        cv2.imshow('click space', dots )
+        
+        global target
+        target = open('mouse_click_points.txt', 'a')
+        global click_count_prev
+        click_count_prev = 0
+        print 'this has looped'
+        
         Tk.Toplevel.__init__(self)
         #Capture the feed coming from the camera
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, vidWidth)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, vidHeight)
+#        cap.set(cv2.CAP_PROP_FRAME_WIDTH, vidWidth)
+#        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, vidHeight)
 
 #        #Calibration values
 #        pupilX = [275, 264, 244, 280, 261, 239, 277, 259, 240]
@@ -377,7 +400,10 @@ class UserFrame(Tk.Toplevel):
         imgtk1 = ImageTk.PhotoImage(image=img1)
         videoStream1.imgtk1 = imgtk1
         videoStream1.configure(image=imgtk1)
-
+        
+        click_down_flag = False
+        click_up_flag = False
+        
         #Call the threholding function
         threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
 
@@ -415,10 +441,22 @@ class UserFrame(Tk.Toplevel):
 
             if 'aOriginal' in globals() and 'bOriginal' in globals():
                 # Centre points of glint and pupil pass to vector
-                x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+                gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
         
-                # Coordinates on screen
-                ATE.move_mouse(x,y)
+        
+                if callback.click_down_flag or callback.click_up_flag:
+                    target.write("%d %d %d\n" % (gazeX, gazeY, 1))
+                    print ('Saved to file')
+                    
+                else:
+                    target.write("%d %d %d\n" % (gazeX, gazeY, -1))
+                    print gazeX
+                    print gazeY
+                    print ' '
+                
+#                # Coordinates on screen
+#                ATE.move_mouse(gazeX,gazeY)
+                infoLabel.configure(text = "Now tracking your eye!")
             else:
                 infoLabel.configure(text = "You have not calibrated yet, please do so")
     
@@ -427,6 +465,7 @@ class UserFrame(Tk.Toplevel):
     #----------------------------------------------------------------------
     #Called when quit is pressed
     def quitCal(self):
+        target.close()
         self.quit()
         self.destroy()
         
@@ -434,6 +473,7 @@ class UserFrame(Tk.Toplevel):
     #Called when re-calibrate button is pressed
     #Send a message to pub to start the calibration again
     def recalibrate(self):
+        cv2.destroyAllWindows()
         self.destroy()
         global iteration
         iteration = 0

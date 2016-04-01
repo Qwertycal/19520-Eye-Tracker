@@ -60,11 +60,6 @@ def move_mouse(x1,y1):
         pyautogui.click()
         spaceCount = 0
 
-
-
-
-
-
 #def stuff():
 #    #List of coordinates to move to
 #    #coords = [(0,0), (800, 800),(90, 110), (103, 104), (98, 97), (102, 104)]

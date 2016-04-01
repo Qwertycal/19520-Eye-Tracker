@@ -83,6 +83,7 @@ def getContoursCorneal(image):
     contourList = []
     
     maxArea = 0.0
+    prevDist = 1000.0
     #    print " "
     for c in cnts:
         area = cv2.contourArea(c)
@@ -95,12 +96,18 @@ def getContoursCorneal(image):
         cY = int(M['m01']/M['m00'])
         
         if area > maxArea and area < 250 and abs(cpX - cX) < 50 and abs(cpY - cY) < 50 and cY >= cpY: #ensure the correct contour is detected 15000
-            contourList.append(c)
-            maxArea = area
-            mainContour = c
-            M = cv2.moments(c)
-            contourCentreX = int(M['m10']/M['m00'])
-            contourCentreY = int(M['m01']/M['m00'])
+            deltaX = abs(cpX - cX)
+            deltaY = abs(cpY - cY)
+            
+            dist = np.sqrt(deltaX^2 + deltaY^2)
+            if dist < prevDist:
+                prevDist = dist
+                contourList.append(c)
+                maxArea = area
+                mainContour = c
+                M = cv2.moments(c)
+                contourCentreX = int(M['m10']/M['m00'])
+                contourCentreY = int(M['m01']/M['m00'])
 
     contourImg = np.zeros((470,620),np.uint8)
     contourImg = cv2.cvtColor(contourImg, cv2.COLOR_GRAY2BGR)
