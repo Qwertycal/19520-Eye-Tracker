@@ -105,7 +105,7 @@ def getContoursCorneal(image):
     contourImg = np.zeros((470,620),np.uint8)
     contourImg = cv2.cvtColor(contourImg, cv2.COLOR_GRAY2BGR)
     cv2.drawContours(contourImg,contourList,-1,(0,0,255),3)
-    cv2.imshow('contourImg',contourImg)
+#cv2.imshow('contourImg',contourImg)
 
     return contourCentreX, contourCentreY, mainContour
 
@@ -144,7 +144,7 @@ def getContoursCornealVideo(image):
     contourImg = np.zeros((470,620),np.uint8)
     contourImg = cv2.cvtColor(contourImg, cv2.COLOR_GRAY2BGR)
     cv2.drawContours(contourImg,contourList,-1,(0,0,255),3)
-    cv2.imshow('contourImg',contourImg)
+#cv2.imshow('contourImg',contourImg)
     
     return contourCentreX, contourCentreY, mainContour
 

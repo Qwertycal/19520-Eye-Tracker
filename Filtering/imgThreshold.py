@@ -22,7 +22,7 @@ def imgThreshold(frame):
     # Create structuring element - disk to remove glint
     struct_el = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(35,35))
     frame_open = cv2.morphologyEx(frame_gray, cv2.MORPH_OPEN, struct_el)
-    cv2.imshow('open',frame_open)
+    #cv2.imshow('open',frame_open)
 
     # Get histogram of frame
     # more efficient than calcHist and eliminates memory error
@@ -46,7 +46,7 @@ def imgThreshold(frame):
     # Threshold frame using level obtained from adaptive threshold
     print ("thresh level %d " % threshLevel)
     ret,threshPupil = cv2.threshold(frame_open,threshLevel,255,cv2.THRESH_BINARY)
-    cv2.imshow('thresh pupil',threshPupil)
+    #cv2.imshow('thresh pupil',threshPupil)
    
 
     # Invert and threshold frame to isolate only glint
@@ -54,6 +54,6 @@ def imgThreshold(frame):
     #cv2.imshow('frameInv',frameInv)
 
     ret,threshGlint = cv2.threshold(frame_gray,200,255,cv2.THRESH_BINARY_INV)
-    cv2.imshow('thresh glint',threshGlint)
+    #cv2.imshow('thresh glint',threshGlint)
 
     return threshPupil, threshGlint
