@@ -31,7 +31,6 @@ import click_callback as callback
 screenwidth, screenheight = pyautogui.size()
 
 cap = cv2.VideoCapture(1)
-capOpen = cap.isOpened()
 
 ########################################################################
 class StartScreen(object):
@@ -39,8 +38,12 @@ class StartScreen(object):
     #----------------------------------------------------------------------
     def __init__(self, parent):
         """Constructor"""
+        global vidWidth
+        global vidHeight
         w = 400
-        h = 200
+        h = 400
+        vidWidth = (screenwidth/4)
+        vidHeight = (screenheight/4)
         x = (screenwidth / 2) - (w / 2)
         y = (screenheight / 2) - (h / 2)
         
@@ -53,36 +56,77 @@ class StartScreen(object):
         self.frame.grid(rowspan = 5, columnspan = 4)
         self.buttonFrame = Tk.Frame(parent, width = w)
         self.buttonFrame.grid(row = 5, rowspan = 1, columnspan = 4, sticky = 'S')
-        
-#        global curState
-#        if cap.isOpened():
-#            curState = 'normal'
-#        else:
-#            curState = 'disabled'
 
         welcomeLabel = Tk.Label(self.frame, text = "Welcome!", width = 44)
+        global videoStreamInit
+        #Create label for video to go in
+        videoStreamInit = Tk.Label(self.frame)
         global calibrateButton
-        calibrateButton = Tk.Button(self.buttonFrame, text="Calibrate", command=self.openCalFrame)
+        calibrateButton = Tk.Button(self.buttonFrame, text="Calibrate", command=self.calibrationButton)
         quitButton = Tk.Button(self.buttonFrame, text="Quit", command=self.quitScreen)
+
         welcomeLabel.grid(row = 0, columnspan =4)
-        
+        videoStreamInit.grid(row = 1)
         calibrateButton.grid(row = 1, column = 2)
         quitButton.grid(row = 1, column = 3)
 
-#        self.getCurState()
-
-#    def getCurState(self):
-#        global curState
-#        thread = threading.Timer(5.0, self.getCurState).start()
-#        cap = cv2.VideoCapture(1)
-#        if cap.isOpened():
-#            curState = 'normal'
-#            thread.stop()
-#        else:
-#            curState = 'disabled'
-#        print curState
-#        calibrateButton.configure(state = curState)
-
+        self.show_frameInit()
+    #----------------------------------------------------------------------
+    #Show frame
+    def show_frameInit(self):
+        #Read the input feed, flip it, resize it and show it in the corresponding label
+        #Original, flipped feed
+        if cap.isOpened():
+            ret, frame = cap.read()
+            print 'frame open'
+            flipFrame = cv2.flip(frame, 1)
+            cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2RGBA)
+            cv2image = cv2.resize(cv2image, (vidWidth, vidHeight));
+            img1 = Image.fromarray(cv2image)
+            imgtk1 = ImageTk.PhotoImage(image=img1)
+            videoStreamInit.imgtk1 = imgtk1
+            videoStreamInit.configure(image=imgtk1)
+            
+            #Call the threholding function
+            threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+            
+            #Call Edge Detection of binary frame
+            cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+            #Implement functionality that was used in main to draw around the pupil and glint
+            print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
+            print successfullyDetected
+            if cpX is None or cpY is None or ccX is None or ccY is None:
+                print('pupil or corneal not detected, skipping...')
+            else:
+                # Ellipse Fitting
+                frameCopy = frame.copy()
+                
+                #draw pupil centre
+                cv2.circle(frameCopy, (cpX,cpY),3,(0,255,0),-1)
+                
+                #draw pupil circumference
+                cv2.drawContours(frameCopy,cp,-1,(0,0,255),3)
+                
+                #draw corneal centre
+                cv2.circle(frameCopy, (ccX,ccY),3,(0,255,0),-1)
+                
+                #draw corneal circumference
+                cv2.drawContours(frameCopy,cc,-1,(0,0,255),3)
+                
+                #Code that will hopefully show the detected pupil, if uncommented
+                if(frameCopy != None):
+                    frameC_resized = cv2.resize(frameCopy, (vidWidth, vidHeight), interpolation = cv2.INTER_AREA)
+                    frameC_resized = cv2.flip(frameC_resized, 1)
+                    img1 = Image.fromarray(frameC_resized)
+                    imgtk1 = ImageTk.PhotoImage(image=img1)
+                    videoStreamInit.imgtk1 = imgtk1
+                    videoStreamInit.configure(image=imgtk1)
+        else:
+            videoStreamInit.configure(text = "You have not plugged in the camera")
+            global cap
+            cap = cv2.VideoCapture(1)
+        
+        videoStreamInit.after(5, self.show_frameInit)
     #----------------------------------------------------------------------
     #When the calibrate button is pressed
     def calibrationButton(self):
@@ -96,7 +140,9 @@ class StartScreen(object):
     
     def openCalFrame(self):
         print 'cal screen'
-        self.hide()
+        cv2.destroyAllWindows()
+        self.destroy()
+        pub.sendMessage("userFrameClosed", arg1="data")
         subFrame = CalibrationFrame()
     
     def hide(self):
@@ -323,6 +369,7 @@ class UserFrame(Tk.Toplevel):
         vidWidth = (screenwidth/4)
         vidHeight = (screenheight/4)
 
+        #--------For Accuracy Test----------------
         print 'user frame opned'
         dots = cv2.imread('dots.png')
         cv2.namedWindow('click space')
@@ -334,12 +381,9 @@ class UserFrame(Tk.Toplevel):
         global click_count_prev
         click_count_prev = 0
         print 'this has looped'
+        #--------For Accuracy Test----------------
         
         Tk.Toplevel.__init__(self)
-        #Capture the feed coming from the camera
-#        cap.set(cv2.CAP_PROP_FRAME_WIDTH, vidWidth)
-#        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, vidHeight)
-
 #        #Calibration values
 #        pupilX = [275, 264, 244, 280, 261, 239, 277, 259, 240]
 #        pupilY = [178, 178, 178, 183, 183, 182, 188, 188, 190]
@@ -457,7 +501,7 @@ class UserFrame(Tk.Toplevel):
                 
                 
 #                # Coordinates on screen
-#                ATE.move_mouse(gazeX,gazeY)
+                ATE.move_mouse(gazeX,gazeY)
                 infoLabel.configure(text = "Now tracking your eye!")
             else:
                 infoLabel.configure(text = "You have not calibrated yet, please do so")
