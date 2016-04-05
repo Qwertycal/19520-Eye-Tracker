@@ -40,15 +40,15 @@ class StartScreen(object):
         """Constructor"""
         global vidWidth
         global vidHeight
-        w = 400
-        h = 400
         vidWidth = (screenwidth/4)
         vidHeight = (screenheight/4)
+        w = 400
+        h = vidHeight + 62
         x = (screenwidth / 2) - (w / 2)
         y = (screenheight / 2) - (h / 2)
         
         self.root = parent
-        self.root.title("Welcome")
+        self.root.title("Eye Tracker")
         self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
         self.root.focus_force()
         self.frame = Tk.Frame(parent, width = w, height = h)
@@ -79,7 +79,8 @@ class StartScreen(object):
     def show_frameInit(self):
         #Read the input feed, flip it, resize it and show it in the corresponding label
         #Original, flipped feed
-        if cap.isOpened() and (not calButton):
+        if cap.isOpened():
+            print 'Start frame'
             ret, frame = cap.read()
             print 'frame open'
             flipFrame = cv2.flip(frame, 1)
@@ -129,7 +130,8 @@ class StartScreen(object):
             global cap
             cap = cv2.VideoCapture(1)
 
-        videoStreamInit.after(5, self.show_frameInit)
+        if (not calButton):
+                videoStreamInit.after(5, self.show_frameInit)
     #----------------------------------------------------------------------
     #When the calibrate button is pressed
     def calibrationButton(self):
@@ -140,7 +142,7 @@ class StartScreen(object):
             calButton = True
             self.openCalFrame()
         else:
-            if tkMessageBox.askokcancel("No Eyetracker", "The eyetracker is not connected, please connect it."):
+            if tkMessageBox.showwarning("No Eyetracker", "The eyetracker is not connected, please connect it."):
                 self.calibrationButton()
     
     def openCalFrame(self):
@@ -382,149 +384,106 @@ class UserFrame(Tk.Toplevel):
         vidWidth = (screenwidth/4)
         vidHeight = (screenheight/4)
 
-        #--------For Accuracy Test----------------
-#        print 'user frame opned'
-#        dots = cv2.imread('dots.png')
-#        cv2.namedWindow('click space')
-#        cv2.setMouseCallback("click space", callback.click_callback)
-#        cv2.imshow('click space', dots )
-#        
-#        global target
-#        target = open('mouse_click_points.txt', 'a')
-#        global click_count_prev
-#        click_count_prev = 0
-#        print 'this has looped'
-        #--------For Accuracy Test----------------
-        
+        #GUI setup
         Tk.Toplevel.__init__(self)
-#        #Calibration values
-#        pupilX = [275, 264, 244, 280, 261, 239, 277, 259, 240]
-#        pupilY = [178, 178, 178, 183, 183, 182, 188, 188, 190]
-#        glintX = [278, 273, 264, 281, 272, 262, 279, 270, 259]
-#        glintY = [190, 188, 190, 191, 189, 190, 190, 191, 192]
-#        calibrationX = [213, 639, 1065, 213, 639, 1065, 213, 639, 1065]
-#        calibrationY = [133, 133, 133, 399, 399, 399, 665, 665, 665]
-#
-#        global aOriginal
-#        global bOriginal
-#        aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, calibrationX, calibrationY)
-
         #Set up how big the gui window should be, and where it should be positioned on screen
         #Set to be slightly bigger than the video feed, and be positioned in the bottom right of the screen
         w = vidWidth + 4
         h = vidHeight + 56
         x = screenwidth - (w + 10)
         y = screenheight - (h + 60)
-
+        
         #Set up the GUI
         self.geometry('%dx%d+%d+%d' % (w, h, x, y))
         self.title("Eye Tracking")
         self.bind('<Escape>', quit)
-
+        
         #Create button frame
         buttonFrame = Tk.Frame(self)
-
+        
         global videoStream1
         #Create label for video to go in
         videoStream1 = Tk.Label(self)
         
         global infoLabel
         infoLabel = Tk.Label(self)
-
+        
         #Create buttons
         recalibrateButton = Tk.Button(buttonFrame, text = "Calibrate", command = self.recalibrate)
         quitButton = Tk.Button(buttonFrame, text = "Quit", command = self.quitCal)
-
+        
         #Put all of the elements into the GUI
         buttonFrame.grid(row = 2, column = 0, sticky = 'N')
-
+        
         infoLabel.grid(row = 1, column = 0)
         videoStream1.grid(row = 0, column = 0)
         recalibrateButton.grid(row = 0, column = 0)
         quitButton.grid(row = 0, column = 1)
-
+        
         self.show()
-
+    
     #Show frame
     def show_frame(self):
         #Read the input feed, flip it, resize it and show it in the corresponding label
         #Original, flipped feed
-        if cap.isOpened():
-            print 'show user frame'
-            ret, frame = cap.read()
-            flipFrame = cv2.flip(frame, 1)
-            cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2RGBA)
-            cv2image = cv2.resize(cv2image, (vidWidth, vidHeight));
-            img1 = Image.fromarray(cv2image)
-            imgtk1 = ImageTk.PhotoImage(image=img1)
-            videoStream1.imgtk1 = imgtk1
-            videoStream1.configure(image=imgtk1)
-
-            #Call the threholding function
-            threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-
-            #Call Edge Detection of binary frame
-            cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
-            #Implement functionality that was used in main to draw around the pupil and glint
-            print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
-            print successfullyDetected
-            if cpX is None or cpY is None or ccX is None or ccY is None:
-                print('pupil or corneal not detected, skipping...')
-            else:
-                # Ellipse Fitting
-                frameCopy = frame.copy()
-                
-                #draw pupil centre
-                cv2.circle(frameCopy, (cpX,cpY),3,(0,255,0),-1)
-                
-                #draw pupil circumference
-                cv2.drawContours(frameCopy,cp,-1,(0,0,255),3)
-                
-                #draw corneal centre
-                cv2.circle(frameCopy, (ccX,ccY),3,(0,255,0),-1)
-                
-                #draw corneal circumference
-                cv2.drawContours(frameCopy,cc,-1,(0,0,255),3)
-                
-                #Code that will hopefully show the detected pupil, if uncommented
-                if(frameCopy != None):
-                    frameC_resized = cv2.resize(frameCopy, (vidWidth, vidHeight), interpolation = cv2.INTER_AREA)
-                    frameC_resized = cv2.flip(frameC_resized, 1)
-                    img1 = Image.fromarray(frameC_resized)
-                    imgtk1 = ImageTk.PhotoImage(image=img1)
-                    videoStream1.imgtk1 = imgtk1
-                    videoStream1.configure(image=imgtk1)
-
-                if 'aOriginal' in globals() and 'bOriginal' in globals():
-                    # Centre points of glint and pupil pass to vector
-                    gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-                    
-                    #--------------Accuracy testing----------------#
-    #                print('Callback click')
-    #                print callback.click_down_flag
-    #                if (callback.click_down_flag) or (callback.click_up_flag):
-    #                    target.write("%d %d %d %d %d\n" % (callback.refPt[0], callback.refPt[1],gazeX, gazeY, 1))
-    #                    print ('Saved to file')
-    #                    callback.click_down_flag = False
-    #                    callback.click_up_flag = False
-    #
-    #                elif (not callback.click_down_flag) or (not callback.click_up_flag):
-    #                    target.write("%s %s %d %d %d\n" % (' ',' ', gazeX, gazeY, -1))
-    #                    print 'false if entered'
-                    #--------------Accuracy testing----------------#
-                    
-                    # Coordinates on screen
-                    ATE.move_mouse(gazeX,gazeY)
-                    infoLabel.configure(text = "Now tracking your eye!")
-                else:
-                    infoLabel.configure(text = "You have not calibrated yet, please do so")
+        print 'user frame'
+        ret, frame = cap.read()
+        flipFrame = cv2.flip(frame, 1)
+        cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2RGBA)
+        cv2image = cv2.resize(cv2image, (vidWidth, vidHeight));
+        img1 = Image.fromarray(cv2image)
+        imgtk1 = ImageTk.PhotoImage(image=img1)
+        videoStream1.imgtk1 = imgtk1
+        videoStream1.configure(image=imgtk1)
         
+        #Call the threholding function
+        threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+        
+        #Call Edge Detection of binary frame
+        cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+        #Implement functionality that was used in main to draw around the pupil and glint
+        print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
+        print successfullyDetected
+        if cpX is None or cpY is None or ccX is None or ccY is None:
+            print('pupil or corneal not detected, skipping...')
+        else:
+            # Ellipse Fitting
+            frameCopy = frame.copy()
+            
+            #draw pupil centre
+            cv2.circle(frameCopy, (cpX,cpY),3,(0,255,0),-1)
+            
+            #draw pupil circumference
+            cv2.drawContours(frameCopy,cp,-1,(0,0,255),3)
+            
+            #draw corneal centre
+            cv2.circle(frameCopy, (ccX,ccY),3,(0,255,0),-1)
+            
+            #draw corneal circumference
+            cv2.drawContours(frameCopy,cc,-1,(0,0,255),3)
+            
+            #Code that will hopefully show the detected pupil, if uncommented
+            if(frameCopy != None):
+                frameC_resized = cv2.resize(frameCopy, (vidWidth, vidHeight), interpolation = cv2.INTER_AREA)
+                frameC_resized = cv2.flip(frameC_resized, 1)
+                img1 = Image.fromarray(frameC_resized)
+                imgtk1 = ImageTk.PhotoImage(image=img1)
+                videoStream1.imgtk1 = imgtk1
+                videoStream1.configure(image=imgtk1)
+        
+            if 'aOriginal' in globals() and 'bOriginal' in globals():
+                # Centre points of glint and pupil pass to vector
+                gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+                ATE.move_mouse(gazeX, gazeY)
+                infoLabel.configure(text = "Now tracking your eye!")
+            else:
+                infoLabel.configure(text = "You have not calibrated yet, please do so")
+
         videoStream1.after(5, self.show_frame)
 
     #----------------------------------------------------------------------
     #Called when quit is pressed
     def quitCal(self):
-        target.close()
         self.quit()
         self.destroy()
         
