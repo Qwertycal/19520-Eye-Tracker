@@ -55,7 +55,7 @@ class StartScreen(object):
         self.frame.columnconfigure(0, weight=1)
         self.frame.grid(rowspan = 5, columnspan = 4)
         self.buttonFrame = Tk.Frame(parent, width = w)
-        self.buttonFrame.grid(row = 5, rowspan = 1, columnspan = 4, sticky = 'S')
+        self.buttonFrame.grid(row = 5, rowspan = 1, columnspan =5, sticky = 'S')
 
         welcomeLabel = Tk.Label(self.frame, text = "Welcome!", width = 44)
         global videoStreamInit
@@ -63,12 +63,14 @@ class StartScreen(object):
         videoStreamInit = Tk.Label(self.frame)
         global calibrateButton
         calibrateButton = Tk.Button(self.buttonFrame, text="Calibrate", command=self.calibrationButton)
+        helpButton = Tk.Button(self.buttonFrame, text = "Help", command=self.helpButton)
         quitButton = Tk.Button(self.buttonFrame, text="Quit", command=self.quitScreen)
 
         welcomeLabel.grid(row = 0, columnspan =4)
         videoStreamInit.grid(row = 1)
         calibrateButton.grid(row = 1, column = 2)
-        quitButton.grid(row = 1, column = 3)
+        helpButton.grid(row = 1, column = 3)
+        quitButton.grid(row = 1, column = 4)
         
         global calButton
         calButton = False
@@ -132,18 +134,23 @@ class StartScreen(object):
 
         if (not calButton):
                 videoStreamInit.after(5, self.show_frameInit)
+
+    #Update the frame
+    def showInit(self):
+        self.root.update()
+        self.root.deiconify()
+        self.show_frameInit()
+    
     #----------------------------------------------------------------------
     #When the calibrate button is pressed
     def calibrationButton(self):
         cap = cv2.VideoCapture(1)
         if cap.isOpened():
-            print 'if true'
             global calButton
             calButton = True
             self.openCalFrame()
         else:
-            if tkMessageBox.showwarning("No Eyetracker", "The eyetracker is not connected, please connect it."):
-                self.calibrationButton()
+            tkMessageBox.showwarning("No Eyetracker", "The eyetracker is not connected, please connect it.")
     
     def openCalFrame(self):
         print 'cal screen'
@@ -157,11 +164,11 @@ class StartScreen(object):
     def hide(self):
         self.root.withdraw()
 
-    #Update the frame
-    def showInit(self):
-        self.root.update()
-        self.root.deiconify()
-        self.show_frameInit()
+    #---------------------------------------------------------------------
+    #When the help button is pressed
+    def helpButton(self):
+        print 'help button pressed'
+
     #---------------------------------------------------------------------
     #When the quit button is pressed
     def quitScreen(self):
