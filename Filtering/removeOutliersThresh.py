@@ -11,13 +11,13 @@ import numpy as np
 def removeOutliersThresh(hist):
 	#cv2.hist returns a 2D array - make 1D array
 	hist = hist.flatten()
-	print('Len hist ', len(hist))
+    #print('Len hist ', len(hist))
 	maxpeak = np.amax(hist)
-	print('Max', maxpeak)
+    #print('Max', maxpeak)
 
 	#calculate threshold as 5% of maxpeak
 	threshold = (maxpeak/100)*5
-	print('thresh', threshold)
+    #print('thresh', threshold)
 
 	#scan histogram from left to right i.e. start to thresh
 	lower_index = 0
