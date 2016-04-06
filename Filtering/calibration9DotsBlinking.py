@@ -32,8 +32,8 @@ class MyApp(Tk):
         
         #Find size of screen
         width, height = pyautogui.size() #get the width and height of the screen
-        print(width)
-        print(height)
+        #print(width)
+        #print(height)
         
         #Set up global variables
         global qWidth
@@ -175,30 +175,30 @@ class MyApp(Tk):
                 pupilY.append(cpY)
                 glintX.append(ccX)
                 glintY.append(ccY)
-                print 'pupilX current'
-                print pupilX
-            
+#                print 'pupilX current'
+#                print pupilX
+
         if i  < (len(ovalList)):
             j = i + 1
             self.ovalChange(j)
 
         if i == (len(ovalList)-1):
-            print 'Pupil x'
-            print pupilX
-            print 'Pupil y'
-            print pupilY
-            print 'glint x'
-            print glintX
-            print 'glint y'
-            print glintY
-            print 'ScreenCoordsX'
-            print screenCoordinatesX
-            print 'ScreenCoordsY'
-            print screenCoordinatesY
+#            print 'Pupil x'
+#            print pupilX
+#            print 'Pupil y'
+#            print pupilY
+#            print 'glint x'
+#            print glintX
+#            print 'glint y'
+#            print glintY
+#            print 'ScreenCoordsX'
+#            print screenCoordinatesX
+#            print 'ScreenCoordsY'
+#            print screenCoordinatesY
             aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, screenCoordinatesX, screenCoordinatesY)
-            print aOriginal
-            print "Here's a gap"
-            print bOriginal
+#            print aOriginal
+#            print "Here's a gap"
+#            print bOriginal
             print 'Calibration done'
             return aOriginal, bOriginal
 

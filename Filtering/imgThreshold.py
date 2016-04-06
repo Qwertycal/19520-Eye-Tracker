@@ -27,7 +27,7 @@ def imgThreshold(frame):
     # Get histogram of frame
     # more efficient than calcHist and eliminates memory error
     hist_img = np.bincount(frame_gray.flatten())
-    print('len_hist',len(hist_img))
+    #print('len_hist',len(hist_img))
     # truncate histogram to remove bin 0 and bin 255 instead of removing outliers which
     # removes all the bins
     hist_img = hist_img[1:len(hist_img)-2]
@@ -44,7 +44,7 @@ def imgThreshold(frame):
 
 
     # Threshold frame using level obtained from adaptive threshold
-    print ("thresh level %d " % threshLevel)
+    #print ("thresh level %d " % threshLevel)
     ret,threshPupil = cv2.threshold(frame_open,threshLevel,255,cv2.THRESH_BINARY)
     #cv2.imshow('thresh pupil',threshPupil)
    

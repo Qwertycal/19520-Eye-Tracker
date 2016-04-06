@@ -82,9 +82,9 @@ class StartScreen(object):
         #Read the input feed, flip it, resize it and show it in the corresponding label
         #Original, flipped feed
         if cap.isOpened():
-            print 'Start frame'
+            #print 'Start frame'
             ret, frame = cap.read()
-            print 'frame open'
+            #print 'frame open'
             flipFrame = cv2.flip(frame, 1)
             cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2RGBA)
             cv2image = cv2.resize(cv2image, (vidWidth, vidHeight));
@@ -99,8 +99,8 @@ class StartScreen(object):
             #Call Edge Detection of binary frame
             cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
             #Implement functionality that was used in main to draw around the pupil and glint
-            print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
-            print successfullyDetected
+            #print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
+            #print successfullyDetected
             if cpX is None or cpY is None or ccX is None or ccY is None:
                 print('pupil or corneal not detected, skipping...')
             else:
@@ -153,7 +153,7 @@ class StartScreen(object):
             tkMessageBox.showwarning("No Eyetracker", "The eyetracker is not connected, please connect it.")
     
     def openCalFrame(self):
-        print 'cal screen'
+        #print 'cal screen'
         cv2.destroyAllWindows()
         self.hide()
         global iteration
@@ -309,7 +309,7 @@ class CalibrationFrame(Tk.Toplevel):
     #Used to show which circle to look at, by displaying the circle in red
     def ovalChange(self):
         global iteration
-        print iteration
+        #print iteration
         if iteration > 0:
             prevOval = ovalList[iteration - 1]
             self.canvas.itemconfigure(prevOval, fill="black")
@@ -354,7 +354,7 @@ class CalibrationFrame(Tk.Toplevel):
             global aOriginal
             global bOriginal
             aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, screenCoordinatesX, screenCoordinatesY)
-            print 'iteration == lenOval'
+            #print 'iteration == lenOval'
             iteration += 1
             self.openUserFrame()
     
@@ -393,6 +393,19 @@ class UserFrame(Tk.Toplevel):
 
         #GUI setup
         Tk.Toplevel.__init__(self)
+        
+#        #Calibration values
+#        pupilX = [275, 264, 244, 280, 261, 239, 277, 259, 240]
+#        pupilY = [178, 178, 178, 183, 183, 182, 188, 188, 190]
+#        glintX = [278, 273, 264, 281, 272, 262, 279, 270, 259]
+#        glintY = [190, 188, 190, 191, 189, 190, 190, 191, 192]
+#        calibrationX = [213, 639, 1065, 213, 639, 1065, 213, 639, 1065]
+#        calibrationY = [133, 133, 133, 399, 399, 399, 665, 665, 665]
+#
+#        global aOriginal
+#        global bOriginal
+#        aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, calibrationX, calibrationY)
+
         #Set up how big the gui window should be, and where it should be positioned on screen
         #Set to be slightly bigger than the video feed, and be positioned in the bottom right of the screen
         w = vidWidth + 4
@@ -433,7 +446,7 @@ class UserFrame(Tk.Toplevel):
     def show_frame(self):
         #Read the input feed, flip it, resize it and show it in the corresponding label
         #Original, flipped feed
-        print 'user frame'
+        #print 'user frame'
         ret, frame = cap.read()
         flipFrame = cv2.flip(frame, 1)
         cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2RGBA)
@@ -449,8 +462,8 @@ class UserFrame(Tk.Toplevel):
         #Call Edge Detection of binary frame
         cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
         #Implement functionality that was used in main to draw around the pupil and glint
-        print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
-        print successfullyDetected
+        #print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
+        #print successfullyDetected
         if cpX is None or cpY is None or ccX is None or ccY is None:
             print('pupil or corneal not detected, skipping...')
         else:

@@ -34,7 +34,7 @@ def getContours(image):
 #    if mainContour is None:
 #        print "pupil contour is none"
 
-    print maxArea
+#    print maxArea
     return contourCentreX, contourCentreY, mainContour
 
 def getContoursVideo(image):
