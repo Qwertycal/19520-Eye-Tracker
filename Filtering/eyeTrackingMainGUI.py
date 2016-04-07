@@ -281,7 +281,7 @@ class CalibrationFrame(Tk.Toplevel):
         # create the button
         calibrateButton = Tk.Button(instructionFrame, text="Start Calibration", command=self.ovalChange)
         userButton = Tk.Button(instructionFrame, text = "User Frame", command=self.openUserFrame)
-        exitButton = Tk.Button(instructionFrame, text="Quit", command=self.quitCal)
+        exitButton = Tk.Button(instructionFrame, text="Quit", command=self.checkQuitCal)
         
         canvasFrame.grid()
         instructionFrame.grid(row = 1)
@@ -293,71 +293,70 @@ class CalibrationFrame(Tk.Toplevel):
         exitButton.grid(column = 2, row = 0)
         
         pub.subscribe(self.listener, "userFrameClosed")
-    
-    
-    def globalVariables(self):
-            
-        print 'globals set'
-    #----------------------------------------------------------------------
-    #Called when exit is pressed
-    def quitCal(self):
-        self.quit()
-        self.destroy()
-    
+
+        global quitButtonClick
+        quitButtonClick = False
+#
+#    def globalVariables(self):
+#            
+#        print 'globals set'
     #--------------------------------------------------------------------
     #When the calibration button is pressed
     #Used to show which circle to look at, by displaying the circle in red
     def ovalChange(self):
         global iteration
+        global quitButtonClick
         #print iteration
-        if iteration > 0:
-            prevOval = ovalList[iteration - 1]
-            self.canvas.itemconfigure(prevOval, fill="black")
-        if iteration < (len(ovalList)):
-            currentOval = ovalList[iteration]
-            self.canvas.itemconfigure(currentOval, fill="red")
-        self.canvas.update()
-        time.sleep(3)
-        
-        if iteration < (len(ovalList)):
-            #Call Edge Detection of binary frame
-            ret, frame = cap.read()
-            threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-            cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
-            calIteration = 0
-            while not successfullyDetected:
+        if (not quitButtonClick):
+            if iteration > 0:
+                prevOval = ovalList[iteration - 1]
+                self.canvas.itemconfigure(prevOval, fill="black")
+            if iteration < (len(ovalList)):
+                currentOval = ovalList[iteration]
+                self.canvas.itemconfigure(currentOval, fill="red")
+            self.canvas.update()
+            time.sleep(3)
+            
+            if iteration < (len(ovalList)):
+                #Call Edge Detection of binary frame
                 ret, frame = cap.read()
                 threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
                 cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
-                calIteration += 1
-                #print calIteration
-                if calIteration > 100:
-                    self.canvas.itemconfigure(currentOval, fill="orange")
-                    self.canvas.update()
-                    threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-                    cv2.imshow('feed',threshPupil)
-            if successfullyDetected:
-                cv2.imwrite('pic{:>05}.png'.format(iteration), frame)
                 calIteration = 0
-                pupilX.append(cpX)
-                pupilY.append(cpY)
-                glintX.append(ccX)
-                glintY.append(ccY)
-                #print 'pupilX current'
-                #print pupilX
-    
-        if iteration  < (len(ovalList)):
-            iteration += 1
-            self.ovalChange()
+                while not successfullyDetected:
+                    ret, frame = cap.read()
+                    threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+                    cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+                    calIteration += 1
+                    #print calIteration
+                    if calIteration > 100:
+                        self.canvas.itemconfigure(currentOval, fill="orange")
+                        self.canvas.update()
+                        threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+                        cv2.imshow('feed',threshPupil)
+                if successfullyDetected:
+                    cv2.imwrite('pic{:>05}.png'.format(iteration), frame)
+                    calIteration = 0
+                    pupilX.append(cpX)
+                    pupilY.append(cpY)
+                    glintX.append(ccX)
+                    glintY.append(ccY)
+                    #print 'pupilX current'
+                    #print pupilX
+        
+            if iteration  < (len(ovalList)):
+                iteration += 1
+                self.ovalChange()
 
-        if iteration == (len(ovalList)):
-            global aOriginal
-            global bOriginal
-            aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, screenCoordinatesX, screenCoordinatesY)
-            #print 'iteration == lenOval'
-            iteration += 1
-            self.openUserFrame()
+            if iteration == (len(ovalList)):
+                global aOriginal
+                global bOriginal
+                aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, screenCoordinatesX, screenCoordinatesY)
+                #print 'iteration == lenOval'
+                iteration += 1
+                self.openUserFrame()
     
+    #---------------------------------------------------------------------
     #Open the user frame
     def openUserFrame(self):
         print 'open user frame'
@@ -368,6 +367,16 @@ class CalibrationFrame(Tk.Toplevel):
     def hide(self):
         self.withdraw()
     
+    #----------------------------------------------------------------------
+    #Called when exit is pressed
+    def checkQuitCal(self):
+        if (tkMessageBox.askokcancel("Quit", "Are you sure you want to quit?")):
+            self.quitCal()
+
+    def quitCal(self):
+        self.quit()
+        self.destroy()
+
     #----------------------------------------------------------------------
     #When the user frame is closed, show the calibration screen
     def listener(self, arg1, arg2=None):
@@ -428,9 +437,12 @@ class UserFrame(Tk.Toplevel):
         global infoLabel
         infoLabel = Tk.Label(self)
         
+        global moveCount
+        moveCount = 0
+        
         #Create buttons
         recalibrateButton = Tk.Button(buttonFrame, text = "Calibrate", command = self.recalibrate)
-        quitButton = Tk.Button(buttonFrame, text = "Quit", command = self.quitCal)
+        quitButton = Tk.Button(buttonFrame, text = "Quit", command = self.checkQuitUser)
         
         #Put all of the elements into the GUI
         buttonFrame.grid(row = 2, column = 0, sticky = 'N')
@@ -490,11 +502,18 @@ class UserFrame(Tk.Toplevel):
                 imgtk1 = ImageTk.PhotoImage(image=img1)
                 videoStream1.imgtk1 = imgtk1
                 videoStream1.configure(image=imgtk1)
+            
+            global moveCount
         
             if 'aOriginal' in globals() and 'bOriginal' in globals():
-                # Centre points of glint and pupil pass to vector
-                gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-                ATE.move_mouse(gazeX, gazeY)
+                print moveCount
+                if (moveCount == 0):
+                    # Centre points of glint and pupil pass to vector
+                    gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+                    ATE.move_mouse(gazeX, gazeY)
+                    moveCount = 0
+                else:
+                    moveCount += 1
                 infoLabel.configure(text = "Now tracking your eye!")
             else:
                 infoLabel.configure(text = "You have not calibrated yet, please do so")
@@ -503,7 +522,11 @@ class UserFrame(Tk.Toplevel):
 
     #----------------------------------------------------------------------
     #Called when quit is pressed
-    def quitCal(self):
+    def checkQuitUser(self):
+        if (tkMessageBox.askokcancel("Quit", "Are you sure you want to quit?")):
+            self.quitUser()
+    
+    def quitUser(self):
         self.quit()
         self.destroy()
         
