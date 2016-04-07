@@ -506,7 +506,7 @@ class UserFrame(Tk.Toplevel):
             global moveCount
         
             if 'aOriginal' in globals() and 'bOriginal' in globals():
-                print moveCount
+                #print moveCount
                 if (moveCount == 0):
                     # Centre points of glint and pupil pass to vector
                     gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)

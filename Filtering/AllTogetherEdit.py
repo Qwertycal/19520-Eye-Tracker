@@ -26,7 +26,8 @@ def move_mouse(x1,y1):
     cursorClick = 20 #alters how long the user must look at a point before a click
     maxMovement = 200 #alters the area the user must look at to invoke a click
     maxClickMovement = 400
-    cursorDoubleClick = 4
+    cursorDoubleClick = 40
+    doubleCount = 0
     
     #Move to the first location and add the location to the list
     if len(pointsVisited) <=0:
@@ -59,7 +60,7 @@ def move_mouse(x1,y1):
         lowBound2 = (pointsVisited[prevPos-cursorClick][1])-maxMovement
         highBound1 = (pointsVisited[prevPos-cursorClick][0])+maxMovement
         highBound2 = (pointsVisited[prevPos-cursorClick][1])+maxMovement
-        spaceCount = 0
+        #spaceCount = 0
         #For all the moves between the (cursorClick)th previous move and the current one,
         #check if the cursor has stayed within the bounds, if it has for each then add one to spaceCount
         for j in range((prevPos-(cursorClick - 1)), (prevPos+1)):
@@ -67,40 +68,51 @@ def move_mouse(x1,y1):
                 spaceCount += 1
             else:
                 spaceCount = 0
+        if len(pointsVisited) > cursorDoubleClick:
+            for k in range((prevPos-(cursorDoubleClick - 1)), (prevPos+1)):
+                if((lowBound1<= pointsVisited[k][0] <= highBound1) & (lowBound2) <= pointsVisited[k][1] <= (highBound2)):
+                    doubleCount += 1
+                else:
+                    doubleCount = 0
+#        print doubleCount
     #print spaceCount
     #If there have been (cursorClick) consecutive moves in a row within the bounds, then click, and check if there should be a scroll
     if (spaceCount == cursorClick):
         print('Click Invoked')
-        if len(pointsClicked) <= cursorDoubleClick:
-            pyautogui.click()
-            pointsClicked.append(pyautogui.position())
-            spaceCount = 0
-            print 'Point Clicked'
-            print pointsClicked[0][0]
-            print pointsClicked[0][1]
-        else:
-            prevClickPos = len(pointsClicked) - 1
-            #print prevClickPos
-            for k in range ((prevClickPos - cursorDoubleClick), prevClickPos):
-                lowClickBound1 = (pointsClicked[prevClickPos - cursorDoubleClick][0])-maxClickMovement
-                lowClickBound2 = (pointsClicked[prevClickPos - cursorDoubleClick][1])-maxClickMovement
-                highClickBound1 = (pointsClicked[prevClickPos - cursorDoubleClick][0])+maxClickMovement
-                highClickBound2 = (pointsClicked[prevClickPos - cursorDoubleClick][1])+maxClickMovement
-        
+            #if len(pointsClicked) <= cursorDoubleClick:
+        pyautogui.click()
+        pointsClicked.append(pyautogui.position())
+        spaceCount = 0
+#        print 'Point Clicked'
+#        print pointsClicked[0][0]
+#        print pointsClicked[0][1]
+#        else:
+#            prevClickPos = len(pointsClicked) - 1
+#            #print prevClickPos
+#            for k in range ((prevClickPos - cursorDoubleClick), prevClickPos):
+#                lowClickBound1 = (pointsClicked[prevClickPos - cursorDoubleClick][0])-maxClickMovement
+#                lowClickBound2 = (pointsClicked[prevClickPos - cursorDoubleClick][1])-maxClickMovement
+#                highClickBound1 = (pointsClicked[prevClickPos - cursorDoubleClick][0])+maxClickMovement
+#                highClickBound2 = (pointsClicked[prevClickPos - cursorDoubleClick][1])+maxClickMovement
+#        
+#
+#                if(lowClickBound1 <= pyautogui.position()[0] <= highClickBound1 & lowClickBound2 <= pyautogui.position()[1] <= highClickBound2):
+#                    pyautogui.moveTo(pointsClicked[prevClickPos][0],pointsClicked[prevClickPos][1])
+#                    print 'double click'
+#                    pyautogui.click(clicks = 2)
+#
+#            pyautogui.click()
+#            pointsClicked.append(pyautogui.position())
+#            spaceCount = 0
+#    
+#            print 'Point Clicked'
+#            print pointsClicked[prevClickPos][0]
+#            print pointsClicked[prevClickPos][1]
 
-                if(lowClickBound1 <= pyautogui.position()[0] <= highClickBound1 & lowClickBound2 <= pyautogui.position()[1] <= highClickBound2):
-                    pyautogui.moveTo(pointsClicked[prevClickPos][0],pointsClicked[prevClickPos][1])
-                    print 'double click'
-                    pyautogui.click(clicks = 2)
-
-            pyautogui.click()
-            pointsClicked.append(pyautogui.position())
-            spaceCount = 0
-    
-            print 'Point Clicked'
-            print pointsClicked[prevClickPos][0]
-            print pointsClicked[prevClickPos][1]
-
+    if (doubleCount == cursorDoubleClick):
+        print 'double click'
+        pyautogui.click(clicks = 2)
+        doubleCount = 0
 
 
 

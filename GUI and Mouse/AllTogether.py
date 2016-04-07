@@ -10,7 +10,7 @@ maxMovement = 10
 width, height = pyautogui.size() #get the width and height of the screen
 
 #List of coordinates to move to
-coords = [(0,0), (800, 800),(90, 110), (103, 104), (98, 97), (102, 104)]
+coords = [(0,0), (492, 383)]
 pointsVisited = []
 pyautogui.moveTo(coords[0], duration=0.25)
 
@@ -51,7 +51,8 @@ while var == 1:
     #If there have been 4 consecutive moves in a row within the bounds, then click, and check if there should be a scroll
     if (spaceCount == cursorClick):
         print('Click')
-        pyautogui.click()
+        pyautogui.click(clicks = 2)
+        pyautogui.doubleClick();
         spaceCount = 0
         #If the cursor is near a scroll bar, then scroll, up or down
         scrollUpLoc = pyautogui.locateOnScreen('scrollUp.png')
