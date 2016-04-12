@@ -86,8 +86,8 @@ class StartScreen(object):
             ret, frame = cap.read()
             #print 'frame open'
             flipFrame = cv2.flip(frame, 1)
-            cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2RGBA)
-            cv2image = cv2.resize(cv2image, (vidWidth, vidHeight));
+            #cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_RGB2GRAY)
+            cv2image = cv2.resize(flipFrame, (vidWidth, vidHeight));
             img1 = Image.fromarray(cv2image)
             imgtk1 = ImageTk.PhotoImage(image=img1)
             videoStreamInit.imgtk1 = imgtk1
@@ -333,7 +333,7 @@ class CalibrationFrame(Tk.Toplevel):
 				if iteration == 0:
 					#time.sleep(5)
 					count = 0
-					while(count < 30):
+					while(count < 50):
 						count+=1
 						ret, frame = cap.read()
 					
@@ -499,8 +499,8 @@ class UserFrame(Tk.Toplevel):
         #print 'user frame'
         ret, frame = cap.read()
         flipFrame = cv2.flip(frame, 1)
-        cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2RGBA)
-        cv2image = cv2.resize(cv2image, (vidWidth, vidHeight));
+        #cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2GRAY)
+        cv2image = cv2.resize(flipFrame, (vidWidth, vidHeight));
         img1 = Image.fromarray(cv2image)
         imgtk1 = ImageTk.PhotoImage(image=img1)
         videoStream1.imgtk1 = imgtk1
@@ -515,8 +515,8 @@ class UserFrame(Tk.Toplevel):
         #print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
         #print successfullyDetected
         if cpX is None or cpY is None or ccX is None or ccY is None:
-            #print('pupil or corneal not detected, skipping...')
-			x = 1
+            print('pupil or corneal not detected, skipping...')
+			#x = 1
         else:
             # Ellipse Fitting
             frameCopy = frame.copy()
@@ -546,13 +546,13 @@ class UserFrame(Tk.Toplevel):
         
             if 'aOriginal' in globals() and 'bOriginal' in globals():
                 #print moveCount
-                if (moveCount == 0):
+                #if (moveCount == 0):
                     # Centre points of glint and pupil pass to vector
-                    gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-                    ATE.move_mouse(gazeX, gazeY)
-                    moveCount = 0
-                else:
-                    moveCount += 1
+                gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+                ATE.move_mouse(gazeX, gazeY)
+                    # moveCount = 0
+                # else:
+                    # moveCount += 1
                 infoLabel.configure(text = "Now tracking your eye!")
             else:
                 infoLabel.configure(text = "You have not calibrated yet, please do so")
