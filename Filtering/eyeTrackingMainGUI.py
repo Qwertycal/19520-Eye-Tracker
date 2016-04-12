@@ -30,7 +30,7 @@ import click_callback as callback
 #Find the screen width & set the approprite size for the feed
 screenwidth, screenheight = pyautogui.size()
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 ########################################################################
 class StartScreen(object):
@@ -306,55 +306,93 @@ class CalibrationFrame(Tk.Toplevel):
     def ovalChange(self):
         global iteration
         global quitButtonClick
-        #print iteration
+        print "clicked start calibration %d" % iteration
         if (not quitButtonClick):
-            if iteration > 0:
-                prevOval = ovalList[iteration - 1]
-                self.canvas.itemconfigure(prevOval, fill="black")
-            if iteration < (len(ovalList)):
-                currentOval = ovalList[iteration]
-                self.canvas.itemconfigure(currentOval, fill="red")
-            self.canvas.update()
-            time.sleep(3)
+            # if iteration > 0:
+                # prevOval = ovalList[iteration - 1]
+                # self.canvas.itemconfigure(prevOval, fill="black")
+            # if iteration < (len(ovalList)):
+                # currentOval = ovalList[iteration]
+                # self.canvas.itemconfigure(currentOval, fill="red")
+            # self.canvas.update()
+            # time.sleep(3)
             
             if iteration < (len(ovalList)):
                 #Call Edge Detection of binary frame
-                ret, frame = cap.read()
-                threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-                cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
-                calIteration = 0
-                while not successfullyDetected:
-                    ret, frame = cap.read()
-                    threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-                    cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
-                    calIteration += 1
-                    #print calIteration
-                    if calIteration > 100:
-                        self.canvas.itemconfigure(currentOval, fill="orange")
-                        self.canvas.update()
-                        threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-                        cv2.imshow('feed',threshPupil)
-                if successfullyDetected:
-                    cv2.imwrite('pic{:>05}.png'.format(iteration), frame)
-                    calIteration = 0
-                    pupilX.append(cpX)
-                    pupilY.append(cpY)
-                    glintX.append(ccX)
-                    glintY.append(ccY)
-                    #print 'pupilX current'
-                    #print pupilX
+				
+				if iteration > 0:
+					prevOval = ovalList[iteration - 1]
+					self.canvas.itemconfigure(prevOval, fill="black")
+				
+				currentOval = ovalList[iteration]
+				self.canvas.itemconfigure(currentOval, fill="red")
+				self.canvas.update()
+				#ret, frame = cap.read()
+				#cv2.imshow('image', frame)
+				
+				if iteration == 0:
+					#time.sleep(5)
+					count = 0
+					while(count < 30):
+						count+=1
+						ret, frame = cap.read()
+					
+				else:
+					#time.sleep(3)
+					count = 0
+					while(count < 30):
+						count+=1
+						ret, frame = cap.read()
+				
+				ret, frame = cap.read()
+				threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+				cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+				calIteration = 0
+				while not successfullyDetected:
+					ret, frame = cap.read()
+					threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+					cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+					calIteration += 1
+					#print calIteration
+					if calIteration > 100:
+						self.canvas.itemconfigure(currentOval, fill="orange")
+						self.canvas.update()
+						threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+						cv2.imshow('feed',threshPupil)
+				if successfullyDetected:
+					cv2.imwrite('pic{:>05}.png'.format(iteration), frame)
+					print ("saved image %d " % iteration)
+					calIteration = 0
+					pupilX.append(cpX)
+					pupilY.append(cpY)
+					glintX.append(ccX)
+					glintY.append(ccY)
+					
+					iteration += 1
+					
+					if iteration == (len(ovalList)):
+						global aOriginal
+						global bOriginal
+						aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, screenCoordinatesX, screenCoordinatesY)
+						#print 'iteration == lenOval'
+						iteration += 1
+						self.openUserFrame()
+						
+					else:
+						self.ovalChange()
+					#print 'pupilX current'
+					#print pupilX
         
-            if iteration  < (len(ovalList)):
-                iteration += 1
-                self.ovalChange()
+            # if iteration  < (len(ovalList)):
+                
 
-            if iteration == (len(ovalList)):
-                global aOriginal
-                global bOriginal
-                aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, screenCoordinatesX, screenCoordinatesY)
-                #print 'iteration == lenOval'
-                iteration += 1
-                self.openUserFrame()
+            # if iteration == (len(ovalList)):
+                # global aOriginal
+                # global bOriginal
+                # aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, screenCoordinatesX, screenCoordinatesY)
+                # print 'iteration == lenOval'
+                # iteration += 1
+                # self.openUserFrame()
     
     #---------------------------------------------------------------------
     #Open the user frame
@@ -477,7 +515,8 @@ class UserFrame(Tk.Toplevel):
         #print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
         #print successfullyDetected
         if cpX is None or cpY is None or ccX is None or ccY is None:
-            print('pupil or corneal not detected, skipping...')
+            #print('pupil or corneal not detected, skipping...')
+			x = 1
         else:
             # Ellipse Fitting
             frameCopy = frame.copy()

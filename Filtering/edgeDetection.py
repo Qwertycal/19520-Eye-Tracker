@@ -196,7 +196,7 @@ def edgeDetectionAlgorithm(pupilThreshold, cornealThreshold):
 
     if cpX is None or cpY is None:  #check is pupil has been detected
         successfullyDetected = False
-        print "pupil not detected"
+        #print "pupil not detected"
         cv2.waitKey(1)
     else:
         #--------------------- Detect corneal -----------------#
@@ -210,7 +210,7 @@ def edgeDetectionAlgorithm(pupilThreshold, cornealThreshold):
 
         if ccX is None or ccY is None:  #check is pupil has been detected
             successfullyDetected = False
-            print "corneal not detected"
+            #print "corneal not detected"
             cv2.waitKey(1)
 
     return cpX,cpY,cp,ccX,ccY,cc,successfullyDetected

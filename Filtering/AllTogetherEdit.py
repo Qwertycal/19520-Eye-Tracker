@@ -53,36 +53,40 @@ def move_mouse(x1,y1):
 #    print (len(pointsVisited))
     #If there have been x number of movements set a bounding box around the first location in the range of x
     #Check each of the locaitons in this range, if all of them are within the bounding box, invoke a click
-    if len(pointsVisited) > cursorClick:
-        #Look at the first location in the range (cursorClick) set a box, (maxMovement) pixels wide around
-        #the cursors location at this point.
-        lowBound1 = (pointsVisited[prevPos-cursorClick][0])-maxMovement
-        lowBound2 = (pointsVisited[prevPos-cursorClick][1])-maxMovement
-        highBound1 = (pointsVisited[prevPos-cursorClick][0])+maxMovement
-        highBound2 = (pointsVisited[prevPos-cursorClick][1])+maxMovement
-        #spaceCount = 0
-        #For all the moves between the (cursorClick)th previous move and the current one,
-        #check if the cursor has stayed within the bounds, if it has for each then add one to spaceCount
-        for j in range((prevPos-(cursorClick - 1)), (prevPos+1)):
-            if((lowBound1<= pointsVisited[j][0] <= highBound1) & (lowBound2) <= pointsVisited[j][1] <= (highBound2)):
-                spaceCount += 1
-            else:
-                spaceCount = 0
-        if len(pointsVisited) > cursorDoubleClick:
-            for k in range((prevPos-(cursorDoubleClick - 1)), (prevPos+1)):
-                if((lowBound1<= pointsVisited[k][0] <= highBound1) & (lowBound2) <= pointsVisited[k][1] <= (highBound2)):
-                    doubleCount += 1
-                else:
-                    doubleCount = 0
+    #--------------------- Check Click-------------------#
+	# if len(pointsVisited) > cursorClick:
+        # Look at the first location in the range (cursorClick) set a box, (maxMovement) pixels wide around
+        # the cursors location at this point.
+        # lowBound1 = (pointsVisited[prevPos-cursorClick][0])-maxMovement
+        # lowBound2 = (pointsVisited[prevPos-cursorClick][1])-maxMovement
+        # highBound1 = (pointsVisited[prevPos-cursorClick][0])+maxMovement
+        # highBound2 = (pointsVisited[prevPos-cursorClick][1])+maxMovement
+        # spaceCount = 0
+        # For all the moves between the (cursorClick)th previous move and the current one,
+        # check if the cursor has stayed within the bounds, if it has for each then add one to spaceCount
+        # for j in range((prevPos-(cursorClick - 1)), (prevPos+1)):
+            # if((lowBound1<= pointsVisited[j][0] <= highBound1) & (lowBound2) <= pointsVisited[j][1] <= (highBound2)):
+                # spaceCount += 1
+            # else:
+                # spaceCount = 0
+        # if len(pointsVisited) > cursorDoubleClick:
+            # for k in range((prevPos-(cursorDoubleClick - 1)), (prevPos+1)):
+                # if((lowBound1<= pointsVisited[k][0] <= highBound1) & (lowBound2) <= pointsVisited[k][1] <= (highBound2)):
+                    # doubleCount += 1
+                # else:
+                    # doubleCount = 0
+	#--------------------- Check Click-------------------#
 #        print doubleCount
     #print spaceCount
     #If there have been (cursorClick) consecutive moves in a row within the bounds, then click, and check if there should be a scroll
-    if (spaceCount == cursorClick):
-        print('Click Invoked')
-            #if len(pointsClicked) <= cursorDoubleClick:
-        pyautogui.click()
-        pointsClicked.append(pyautogui.position())
-        spaceCount = 0
+    #-------------------Click------------------------#
+	# if (spaceCount == cursorClick):
+        # print('Click Invoked')
+          #  if len(pointsClicked) <= cursorDoubleClick:
+        # pyautogui.click()
+        # pointsClicked.append(pyautogui.position())
+        # spaceCount = 0
+		#-------------------Click------------------------#
 #        print 'Point Clicked'
 #        print pointsClicked[0][0]
 #        print pointsClicked[0][1]
@@ -109,10 +113,11 @@ def move_mouse(x1,y1):
 #            print pointsClicked[prevClickPos][0]
 #            print pointsClicked[prevClickPos][1]
 
-    if (doubleCount == cursorDoubleClick):
-        print 'double click'
-        pyautogui.click(clicks = 2)
-        doubleCount = 0
+#-----------------Double Click-------------------#
+    # if (doubleCount == cursorDoubleClick):
+        # print 'double click'
+        # pyautogui.click(clicks = 2)
+        # doubleCount = 0
 
 
 
