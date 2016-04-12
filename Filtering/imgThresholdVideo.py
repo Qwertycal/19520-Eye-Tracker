@@ -32,7 +32,7 @@ def imgThresholdVideo(frame):
 
     # Adjust start index of hist and add manual level adjustment
     # Manually set threshold for video
-    threshLevelAdjust = 43 
+    threshLevelAdjust = 35
 
     #Morphological opening to remove glint
     struct_el = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(28,28))
@@ -41,14 +41,14 @@ def imgThresholdVideo(frame):
 
     # Threshold frame using level set
     ret,threshPupil = cv2.threshold(frame_open,threshLevelAdjust,255,cv2.THRESH_BINARY)
-    cv2.namedWindow('thresh pipil',cv2.WINDOW_NORMAL)
-    cv2.imshow('thresh pupil',threshPupil)
+    #cv2.namedWindow('thresh pipil',cv2.WINDOW_NORMAL)
+    #cv2.imshow('thresh pupil',threshPupil)
 
     # Invert and threshold frame to isolate only glint
     frameInv = np.invert(frame_gray)
 
     ret,threshGlint = cv2.threshold(frameInv,30,255,cv2.THRESH_BINARY_INV)
-    cv2.namedWindow('thresh glint',cv2.WINDOW_NORMAL)
-    cv2.imshow('thresh glint',threshGlint)
+    #cv2.namedWindow('thresh glint',cv2.WINDOW_NORMAL)
+    #cv2.imshow('thresh glint',threshGlint)
 
     return threshPupil, threshGlint
