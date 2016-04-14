@@ -27,9 +27,12 @@ vidWidth = (screenwidth/2) - 5
 vidHeight = (screenheight/2) - 30
 
 #Open the video file & set it's width
+global cap
 cap = cv2.VideoCapture('Eye.mov')
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, vidWidth)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, vidHeight)
+global frame_counter
+frame_counter = 0
 
 #Solutions obtained from 'Eye.MOV'
 aOriginal = [576.217396, -24.047559, 1.0915599, -0.221105357, -0.025469321, 0.037511114]
@@ -60,9 +63,16 @@ videoStream4.grid(row = 1, column = 1)
 
 #Show frame
 def show_frame():
+    global frame_counter
+    global cap
+    if frame_counter >= (cap.get(cv2.CAP_PROP_FRAME_COUNT)-5):
+        print 'loop condition'
+        frame_counter = 0 #Or whatever as long as it is the same as next line
+        cap = cv2.VideoCapture('Eye.MOV')
     #Read the input feed, flip it, resize it and show it in the corresponding label
     #Original, flipped feed
     ret, frame = cap.read()
+    frame_counter += 1
     flipFrame = cv2.flip(frame, 1)
     cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2RGBA)
     cv2image = cv2.resize(flipFrame, (vidWidth, vidHeight));
