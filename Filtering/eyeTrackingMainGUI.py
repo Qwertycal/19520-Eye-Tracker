@@ -42,8 +42,8 @@ class StartScreen(object):
         global vidHeight
         vidWidth = (screenwidth/4)
         vidHeight = (screenheight/4)
-        w = 400
-        h = vidHeight + 62
+        w = vidWidth + 4
+        h = vidHeight + 60
         x = (screenwidth / 2) - (w / 2)
         y = (screenheight / 2) - (h / 2)
         
@@ -67,7 +67,7 @@ class StartScreen(object):
         quitButton = Tk.Button(self.buttonFrame, text="Quit", command=self.quitScreen)
 
         welcomeLabel.grid(row = 0, columnspan =4)
-        videoStreamInit.grid(row = 1)
+        videoStreamInit.grid(row = 1, column = 1, columnspan = 2, sticky = 'e')
         calibrateButton.grid(row = 1, column = 2)
         helpButton.grid(row = 1, column = 3)
         quitButton.grid(row = 1, column = 4)
@@ -280,7 +280,7 @@ class CalibrationFrame(Tk.Toplevel):
         
         # create the button
         calibrateButton = Tk.Button(instructionFrame, text="Start Calibration", command=self.ovalChange)
-        userButton = Tk.Button(instructionFrame, text = "User Frame", command=self.openUserFrame)
+        #userButton = Tk.Button(instructionFrame, text = "User Frame", command=self.openUserFrame)
         exitButton = Tk.Button(instructionFrame, text="Quit", command=self.checkQuitCal)
         
         canvasFrame.grid()
@@ -289,8 +289,8 @@ class CalibrationFrame(Tk.Toplevel):
         self.canvas.grid()
         
         calibrateButton.grid(column = 0)
-        userButton.grid(column = 1, row = 0)
-        exitButton.grid(column = 2, row = 0)
+        #userButton.grid(column = 1, row = 0)
+        exitButton.grid(column = 1, row = 0)
         
         pub.subscribe(self.listener, "userFrameClosed")
 
@@ -330,19 +330,19 @@ class CalibrationFrame(Tk.Toplevel):
 				#ret, frame = cap.read()
 				#cv2.imshow('image', frame)
 				
-				if iteration == 0:
-					#time.sleep(5)
-					count = 0
-					while(count < 50):
-						count+=1
-						ret, frame = cap.read()
+				# if iteration == 0:
+					#-	time.sleep(5)
+					# count = 0
+					# while(count < 50):
+						# count+=1
+						# ret, frame = cap.read()
 					
-				else:
-					#time.sleep(3)
-					count = 0
-					while(count < 30):
-						count+=1
-						ret, frame = cap.read()
+				# else:
+					# time.sleep(3)
+				count = 0
+				while(count < 30):
+					count+=1
+					ret, frame = cap.read()
 				
 				ret, frame = cap.read()
 				threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
@@ -367,6 +367,8 @@ class CalibrationFrame(Tk.Toplevel):
 					pupilY.append(cpY)
 					glintX.append(ccX)
 					glintY.append(ccY)
+					# self.canvas.itemconfigure(currentOval, fill="green")
+					# self.canvas.update()
 					
 					iteration += 1
 					

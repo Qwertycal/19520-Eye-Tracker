@@ -23,10 +23,10 @@ pointsClicked = []
 
 def move_mouse(x1,y1):
     spaceCount = 0
-    cursorClick = 100 #alters how long the user must look at a point before a click
-    maxMovement = 150 #alters the area the user must look at to invoke a click
+    cursorClick = 80 #alters how long the user must look at a point before a click
+    maxMovement = 200 #alters the area the user must look at to invoke a click
     #maxClickMovement = 200
-    cursorDoubleClick = 200
+    cursorDoubleClick = 160
     doubleCount = 0
     
     #Move to the first location and add the location to the list
@@ -77,7 +77,13 @@ def move_mouse(x1,y1):
 #        print doubleCount
     #print spaceCount
     #If there have been (cursorClick) consecutive moves in a row within the bounds, then click, and check if there should be a scroll
-    if (spaceCount == cursorClick):
+    if (doubleCount == cursorDoubleClick):
+        print 'double click'
+        pyautogui.click(clicks = 2)
+        doubleCount = 0
+		spaceCount = 0
+		
+	if (spaceCount == cursorClick):
         print('Click Invoked')
             #if len(pointsClicked) <= cursorDoubleClick:
         pyautogui.click()
@@ -109,10 +115,7 @@ def move_mouse(x1,y1):
 #            print pointsClicked[prevClickPos][0]
 #            print pointsClicked[prevClickPos][1]
 
-    if (doubleCount == cursorDoubleClick):
-        print 'double click'
-        pyautogui.click(clicks = 2)
-        doubleCount = 0
+    
 
 
 
