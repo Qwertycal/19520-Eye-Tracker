@@ -545,16 +545,19 @@ class UserFrame(Tk.Toplevel):
                 videoStream1.configure(image=imgtk1)
             
             global moveCount
-        
+		
             if 'aOriginal' in globals() and 'bOriginal' in globals():
                 #print moveCount
-                #if (moveCount == 0):
-                    # Centre points of glint and pupil pass to vector
-                gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-                ATE.move_mouse(gazeX, gazeY)
-                    # moveCount = 0
-                # else:
-                    # moveCount += 1
+                if (moveCount == 1):
+					# Centre points of glint and pupil pass to vector
+					gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+					# avgGazeX = (gazeX + gazeXPrev)/2
+					# avgGazeY = (gazeY + gazeYPrev)/2
+					ATE.move_mouse(gazeX, gazeY)
+					moveCount = 0
+                else:
+					#gazeXPrev, gazeYPrev = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+					moveCount += 1
                 infoLabel.configure(text = "Now tracking your eye!")
             else:
                 infoLabel.configure(text = "You have not calibrated yet, please do so")

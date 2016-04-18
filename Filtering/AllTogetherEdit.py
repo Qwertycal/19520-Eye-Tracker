@@ -23,10 +23,10 @@ pointsClicked = []
 
 def move_mouse(x1,y1):
     spaceCount = 0
-    cursorClick = 80 #alters how long the user must look at a point before a click
-    maxMovement = 200 #alters the area the user must look at to invoke a click
+    cursorClick = 8 #alters how long the user must look at a point before a click
+    maxMovement = 250 #alters the area the user must look at to invoke a click
     #maxClickMovement = 200
-    cursorDoubleClick = 160
+    cursorDoubleClick = 16
     doubleCount = 0
     
     #Move to the first location and add the location to the list
@@ -64,13 +64,15 @@ def move_mouse(x1,y1):
         #For all the moves between the (cursorClick)th previous move and the current one,
         #check if the cursor has stayed within the bounds, if it has for each then add one to spaceCount
         for j in range((prevPos-(cursorClick - 1)), (prevPos+1)):
-            if((lowBound1<= pointsVisited[j][0] <= highBound1) & (lowBound2) <= pointsVisited[j][1] <= (highBound2)):
+            if((lowBound1<= pointsVisited[j][0]) & (pointsVisited[j][0] <= highBound1) & 
+			(lowBound2 <= pointsVisited[j][1]) & (pointsVisited[j][1] <= highBound2)):
                 spaceCount += 1
             else:
                 spaceCount = 0
         if len(pointsVisited) > cursorDoubleClick:
             for k in range((prevPos-(cursorDoubleClick - 1)), (prevPos+1)):
-                if((lowBound1<= pointsVisited[k][0] <= highBound1) & (lowBound2) <= pointsVisited[k][1] <= (highBound2)):
+                if((lowBound1<= pointsVisited[k][0]) &  (pointsVisited[k][0] <= highBound1) & 
+				(lowBound2 <= pointsVisited[k][1]) & (pointsVisited[k][1] <= highBound2)):
                     doubleCount += 1
                 else:
                     doubleCount = 0
