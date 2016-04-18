@@ -81,11 +81,11 @@ def move_mouse(x1,y1):
         print 'double click'
         pyautogui.click(clicks = 2)
         doubleCount = 0
-		spaceCount = 0
-		
-	if (spaceCount == cursorClick):
+        spaceCount = 0
+
+    if (spaceCount == cursorClick):
         print('Click Invoked')
-            #if len(pointsClicked) <= cursorDoubleClick:
+        #if len(pointsClicked) <= cursorDoubleClick:
         pyautogui.click()
         pointsClicked.append(pyautogui.position())
         spaceCount = 0
