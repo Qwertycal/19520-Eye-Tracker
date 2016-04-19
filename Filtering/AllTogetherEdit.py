@@ -2,6 +2,7 @@ import pyautogui
 import math
 import cv2
 import csv
+import sys
 #
 #with open('points2.csv','rb') as file:
 #    contents = csv.reader(file)
@@ -20,6 +21,20 @@ speed = 1500 #Controls the speed of the mouse
 width, height = pyautogui.size() #get the width and height of the screen
 pointsVisited = []
 pointsClicked = []
+
+global scrollDownFile
+global scrollUpFile
+global scrollDist
+
+if (sys.platform == 'win32'):
+    scrollUpFile = 'scrollUpWindows.png'
+    scrollDownFile = 'scrollDownWindows.png'
+    scrollDist = 200
+elif (sys.platform == 'darwin'):
+    scrollUpFile = 'scrollUpMac.png'
+    scrollDownFile = 'scrollDownMac.png'
+    scrollDist = 20
+
 
 def move_mouse(x1,y1):
 	spaceCount = 0
@@ -94,21 +109,21 @@ def move_mouse(x1,y1):
 		pointsClicked.append(pyautogui.position())
 		spaceCount = 0
 						
-		for k in (pyautogui.locateAllOnScreen('scrollUpWindowsBlue.png', grayscale=True)):
-			if (x1 > (k[0] - scollBox) and x1 < (k[0] + k[2] + scollBox) and y1 > (k[1] - scollBox) and y1 < (k[1] + k[3] + scollBox)):
-				pyautogui.scroll(200)
-				print("Scrolled up")
-		for l in (pyautogui.locateAllOnScreen('scrollDownWindowsBlue.png', grayscale=True)):
-			if (x1 > (l[0] - scollBox) and x1 < (l[0] + l[2] + scollBox) and y1 > (l[1] - scollBox) and y1 < (l[1] + l[3] + scollBox)):
-				pyautogui.scroll(-200)
-				print("Scrolled down")
-		for m in (pyautogui.locateAllOnScreen('scrollUpWindows.png', grayscale=True)):
+#		for k in (pyautogui.locateAllOnScreen('scrollUpWindowsBlue.png', grayscale=True)):
+#			if (x1 > (k[0] - scollBox) and x1 < (k[0] + k[2] + scollBox) and y1 > (k[1] - scollBox) and y1 < (k[1] + k[3] + scollBox)):
+#				pyautogui.scroll(200)
+#				print("Scrolled up")
+#		for l in (pyautogui.locateAllOnScreen('scrollDownWindowsBlue.png', grayscale=True)):
+#			if (x1 > (l[0] - scollBox) and x1 < (l[0] + l[2] + scollBox) and y1 > (l[1] - scollBox) and y1 < (l[1] + l[3] + scollBox)):
+#				pyautogui.scroll(-200)
+#				print("Scrolled down")
+		for m in (pyautogui.locateAllOnScreen(scrollUpFile, grayscale=True)):
 			if (x1 > (m[0] - scollBox) and x1 < (m[0] + m[2] + scollBox) and y1 > (m[1] - scollBox) and y1 < (m[1] + m[3] + scollBox)):
-				pyautogui.scroll(200)
+				pyautogui.scroll(scrollDist)
 				print("Scrolled up")
-		for n in (pyautogui.locateAllOnScreen('scrollDownWindows.png', grayscale=True)):
+		for n in (pyautogui.locateAllOnScreen(scrollDownFile, grayscale=True)):
 			if (x1 > (n[0] - scollBox) and x1 < (n[0] + n[2] + scollBox) and y1 > (n[1] - scollBox) and y1 < (n[1] + n[3] + scollBox)):
-				pyautogui.scroll(-200)
+				pyautogui.scroll(-scrollDist)
 				print("Scrolled down")
 				
 		# for o in (pyautogui.locateAllOnScreen('scrollUpWordHighlighted.png', grayscale=True)):
