@@ -71,11 +71,11 @@ while var == 1:
 		# list(scrollUpLoc)
 		x, y = pyautogui.position()
 		print (x, y)
-		for k in (pyautogui.locateAllOnScreen('scrollUpWindowsHighlighted.png', grayscale=True)):
+		for k in (pyautogui.locateAllOnScreen('scrollUpWordHighlighted.png', grayscale=True)):
 			if (x > (k[0] - 5) and x < (k[0] + k[2] + 5) and y > (k[1] - 5) and y < (k[1] + k[3] + 5)):
 				pyautogui.scroll(200)
 				print("Scrolled up")
-		for l in (pyautogui.locateAllOnScreen('scrollDownWindowsHighlighted.png', grayscale=True)):
+		for l in (pyautogui.locateAllOnScreen('scrollDownWordHighlighted.png', grayscale=True)):
 			if (x > (l[0] - 5) and x < (l[0] + l[2] + 5) and y > (l[1] - 5) and y < (l[1] + l[3] + 5)):
 				pyautogui.scroll(-200)
 				print("Scrolled down")

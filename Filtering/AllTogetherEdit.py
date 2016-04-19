@@ -93,23 +93,40 @@ def move_mouse(x1,y1):
 		pyautogui.click()
 		pointsClicked.append(pyautogui.position())
 		spaceCount = 0
-		
-		for k in (pyautogui.locateAllOnScreen('scrollUpWordHighlighted.png', grayscale=True)):
+						
+		for k in (pyautogui.locateAllOnScreen('scrollUpWindowsBlue.png', grayscale=True)):
 			if (x1 > (k[0] - scollBox) and x1 < (k[0] + k[2] + scollBox) and y1 > (k[1] - scollBox) and y1 < (k[1] + k[3] + scollBox)):
 				pyautogui.scroll(200)
 				print("Scrolled up")
-		for l in (pyautogui.locateAllOnScreen('scrollDownWordHighlighted.png', grayscale=True)):
+		for l in (pyautogui.locateAllOnScreen('scrollDownWindowsBlue.png', grayscale=True)):
 			if (x1 > (l[0] - scollBox) and x1 < (l[0] + l[2] + scollBox) and y1 > (l[1] - scollBox) and y1 < (l[1] + l[3] + scollBox)):
 				pyautogui.scroll(-200)
 				print("Scrolled down")
-		for k in (pyautogui.locateAllOnScreen('scrollUpWord.png', grayscale=True)):
-			if (x1 > (k[0] - scollBox) and x1 < (k[0] + k[2] + scollBox) and y1 > (k[1] - scollBox) and y1 < (k[1] + k[3] + scollBox)):
+		for m in (pyautogui.locateAllOnScreen('scrollUpWindows.png', grayscale=True)):
+			if (x1 > (m[0] - scollBox) and x1 < (m[0] + m[2] + scollBox) and y1 > (m[1] - scollBox) and y1 < (m[1] + m[3] + scollBox)):
 				pyautogui.scroll(200)
 				print("Scrolled up")
-		for l in (pyautogui.locateAllOnScreen('scrollDownWord.png', grayscale=True)):
-			if (x1 > (l[0] - scollBox) and x1 < (l[0] + l[2] + scollBox) and y1 > (l[1] - scollBox) and y1 < (l[1] + l[3] + scollBox)):
+		for n in (pyautogui.locateAllOnScreen('scrollDownWindows.png', grayscale=True)):
+			if (x1 > (n[0] - scollBox) and x1 < (n[0] + n[2] + scollBox) and y1 > (n[1] - scollBox) and y1 < (n[1] + n[3] + scollBox)):
 				pyautogui.scroll(-200)
 				print("Scrolled down")
+				
+		# for o in (pyautogui.locateAllOnScreen('scrollUpWordHighlighted.png', grayscale=True)):
+			# if (x1 > (o[0] - scollBox) and x1 < (o[0] + o[2] + scollBox) and y1 > (o[1] - scollBox) and y1 < (o[1] + o[3] + scollBox)):
+				# pyautogui.scroll(200)
+				# print("Scrolled up")
+		# for p in (pyautogui.locateAllOnScreen('scrollDownWordHighlighted.png', grayscale=True)):
+			# if (x1 > (p[0] - scollBox) and x1 < (p[0] + p[2] + scollBox) and y1 > (p[1] - scollBox) and y1 < (p[1] + p[3] + scollBox)):
+				# pyautogui.scroll(-200)
+				# print("Scrolled down")
+		# for q in (pyautogui.locateAllOnScreen('scrollUpWord.png', grayscale=True)):
+			# if (x1 > (q[0] - scollBox) and x1 < (q[0] + q[2] + scollBox) and y1 > (q[1] - scollBox) and y1 < (q[1] + q[3] + scollBox)):
+				# pyautogui.scroll(200)
+				# print("Scrolled up")
+		# for r in (pyautogui.locateAllOnScreen('scrollDownWord.png', grayscale=True)):
+			# if (x1 > (r[0] - scollBox) and x1 < (r[0] + r[2] + scollBox) and y1 > (r[1] - scollBox) and y1 < (r[1] + r[3] + scollBox)):
+				# pyautogui.scroll(-200)
+				# print("Scrolled down")
 #        print 'Point Clicked'
 #        print pointsClicked[0][0]
 #        print pointsClicked[0][1]
