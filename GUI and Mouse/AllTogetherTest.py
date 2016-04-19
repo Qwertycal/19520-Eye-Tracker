@@ -73,7 +73,7 @@ while var == 1:
         #check if the cursor has stayed within the bounds, if it has for each then add one to spaceCount
 		for j in range((prevPos-(cursorClick - 1)), (prevPos+1)):
 			print spaceCount
-			if((lowBound1<= pointsVisited[j][0] <= highBound1) & (lowBound2) <= pointsVisited[j][1] <= (highBound2)):
+			if((lowBound1<= pointsVisited[j][0]) & (pointsVisited[j][0] <= highBound1) & (lowBound2 <= pointsVisited[j][1]) & (pointsVisited[j][1] <= highBound2)):
 				print 'Points visited current'
 				print pointsVisited[j][0]
 				print pointsVisited[j][1]

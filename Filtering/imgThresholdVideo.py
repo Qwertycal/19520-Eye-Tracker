@@ -35,7 +35,7 @@ def imgThresholdVideo(frame):
     threshLevelAdjust = 35
 
     #Morphological opening to remove glint
-    struct_el = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(28,28))
+    struct_el = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(35,35))
     frame_open = cv2.morphologyEx(frame_gray, cv2.MORPH_OPEN, struct_el)
     #cv2.imshow('open',frame_open)
 
