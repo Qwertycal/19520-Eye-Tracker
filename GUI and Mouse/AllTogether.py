@@ -58,37 +58,27 @@ while var == 1:
 		pyautogui.click()
 		spaceCount = 0
 		#If the cursor is near a scroll bar, then scroll, up or down
-		scrollUpLoc = []
-		scrollUpLoc.append(pyautogui.locateAllOnScreen('scrollUpWindows.png', grayscale=True))
-		scrollUpLoc.append(pyautogui.locateAllOnScreen('scrollUpWindowsHighlighted.png', grayscale=True))
+		#scrollUpLoc = []
+		# scrollUpLoc.append(pyautogui.locateAllOnScreen('scrollUpWindows.png', grayscale=True))
+		# scrollUpLoc.append(pyautogui.locateAllOnScreen('scrollUpWindowsHighlighted.png', grayscale=True))
 		#print('scrollUpLoc' + str(scrollUpLoc[0]))
-		print (list(pyautogui.locateAllOnScreen('scrollUpWindowsHighlighted.png', grayscale=True)))
-		print (list(pyautogui.locateAllOnScreen('scrollUpWindows.png', grayscale=True)))
-		scrollDownLoc = []
-		scrollDownLoc.append(pyautogui.locateAllOnScreen('scrollDownWindows.png', grayscale=True))
-		scrollDownLoc.append(pyautogui.locateAllOnScreen('scrollDownWindowsHighlighted.png', grayscale=True))
+		# print (list(pyautogui.locateAllOnScreen('scrollUpWindowsHighlighted.png', grayscale=True)))
+		# print (list(pyautogui.locateAllOnScreen('scrollUpWindows.png', grayscale=True)))
+		# scrollDownLoc = []
+		# scrollDownLoc.append(pyautogui.locateAllOnScreen('scrollDownWindows.png', grayscale=True))
+		# scrollDownLoc.append(pyautogui.locateAllOnScreen('scrollDownWindowsHighlighted.png', grayscale=True))
 		#print('scrollDownLoc' + str(scrollDownLoc[0]))
-		list(scrollUpLoc)
+		# list(scrollUpLoc)
 		x, y = pyautogui.position()
 		print (x, y)
 		for k in (pyautogui.locateAllOnScreen('scrollUpWindowsHighlighted.png', grayscale=True)):
-			print 'Found up bar'
-			# if hasattr(scrollUpLoc[k], '__getitem__'):
-				# print ('has attr up')
-			if (x > (k[0] - 10) and x < (k[0] + k[2] + 10) and 
-			y > (k[1] - 10) and y < (k[1] + k[3] + 10)):
-				print ("Implement scroll up")
-				pyautogui.scroll(5)
+			if (x > (k[0] - 5) and x < (k[0] + k[2] + 5) and y > (k[1] - 5) and y < (k[1] + k[3] + 5)):
+				pyautogui.scroll(200)
 				print("Scrolled up")
-		#for l in scrollDownLoc:
-			#print l
-			# if hasattr(scrollDownLoc[k], '__getitem__'):
-				# print ('hasattr down')
-				# if (x > (scrollDownLoc[l][0] - 10) and x < (scrollDownLoc[l][0] + scrollDownLoc[l][2] + 10) and 
-				# y > (scrollDownLoc[l][1] - 10) and y < (scrollDownLoc[l][1] - scrollDownLoc[l][3] + 10)):
-					# print ("Implement scroll down")
-					# pyautogui.scroll(5)
-					# print("Scrolled down")
+		for l in (pyautogui.locateAllOnScreen('scrollDownWindowsHighlighted.png', grayscale=True)):
+			if (x > (l[0] - 5) and x < (l[0] + l[2] + 5) and y > (l[1] - 5) and y < (l[1] + l[3] + 5)):
+				pyautogui.scroll(-200)
+				print("Scrolled down")
 	i += 1
 
 
