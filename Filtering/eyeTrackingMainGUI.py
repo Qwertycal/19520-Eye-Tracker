@@ -327,61 +327,88 @@ class CalibrationFrame(Tk.Toplevel):
 				currentOval = ovalList[iteration]
 				self.canvas.itemconfigure(currentOval, fill="red")
 				self.canvas.update()
-				#ret, frame = cap.read()
-				#cv2.imshow('image', frame)
 				
-				# if iteration == 0:
-					#-	time.sleep(5)
-					# count = 0
-					# while(count < 50):
-						# count+=1
-						# ret, frame = cap.read()
-					
-				# else:
-					# time.sleep(3)
 				count = 0
-				while(count < 30):
+				while(count < 20):
 					count+=1
 					ret, frame = cap.read()
 				
-				ret, frame = cap.read()
-				threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-				cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
-				calIteration = 0
-				while not successfullyDetected:
+				gazeCount = 0
+				
+				curPupilX = []
+				curPupilY = []
+				curGlintX = []
+				curGlintY = []
+				while (gazeCount < 3):
+					countGap = 0
+					while(countGap < 5):
+						countGap+=1
+						ret, frame = cap.read()
 					ret, frame = cap.read()
 					threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
 					cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
-					calIteration += 1
-					#print calIteration
-					if calIteration > 100:
-						self.canvas.itemconfigure(currentOval, fill="orange")
-						self.canvas.update()
-						threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-						cv2.imshow('feed',threshPupil)
-				if successfullyDetected:
-					cv2.imwrite('pic{:>05}.png'.format(iteration), frame)
-					print ("saved image %d " % iteration)
 					calIteration = 0
-					pupilX.append(cpX)
-					pupilY.append(cpY)
-					glintX.append(ccX)
-					glintY.append(ccY)
-					# self.canvas.itemconfigure(currentOval, fill="green")
-					# self.canvas.update()
+					while not successfullyDetected:
+						ret, frame = cap.read()
+						threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+						cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+						calIteration += 1
+						if calIteration > 100:
+							self.canvas.itemconfigure(currentOval, fill="orange")
+							self.canvas.update()
+							threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+							cv2.imshow('feed',threshPupil)
+					if successfullyDetected:
+						cv2.imwrite('pic{:>05}{}.png'.format(iteration, gazeCount), frame)
+						print ("saved image %d " % iteration)
+						calIteration = 0
+						curPupilX.append(cpX)
+						curPupilY.append(cpY)
+						curGlintX.append(ccX)
+						curGlintY.append(ccY)
+						# self.canvas.itemconfigure(currentOval, fill="green")
+						# self.canvas.update()
 					
+					gazeCount += 1
+				
+				countPupilX = 0
+				for e in curPupilX:
+					countPupilX += e
+				avgPupilX = countPupilX/len(curPupilX)
+					
+				countPupilY = 0
+				for e in curPupilY:
+					countPupilY += e
+				avgPupilY = countPupilY/len(curPupilY)
+				
+				countGlintX = 0
+				for e in curGlintX:
+					countGlintX += e
+				avgGlintX = countGlintX/len(curGlintX)
+					
+				countGlintY = 0
+				for e in curGlintY:
+					countGlintY += e
+				avgGlintY = countGlintY/len(curGlintY)
+				
+				pupilX.append(avgPupilX)
+				pupilY.append(avgPupilY)
+				glintX.append(avgGlintX)
+				glintY.append(avgGlintY)
+				
+				iteration += 1 
+				
+				if iteration == (len(ovalList)):
+					global aOriginal
+					global bOriginal
+					aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, screenCoordinatesX, screenCoordinatesY)
+					#print 'iteration == lenOval'
+					self.canvas.itemconfigure(currentOval, fill="black")
 					iteration += 1
-					
-					if iteration == (len(ovalList)):
-						global aOriginal
-						global bOriginal
-						aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, screenCoordinatesX, screenCoordinatesY)
-						#print 'iteration == lenOval'
-						iteration += 1
-						self.openUserFrame()
+					self.openUserFrame()
 						
-					else:
-						self.ovalChange()
+				else:
+					self.ovalChange()
 					#print 'pupilX current'
 					#print pupilX
         
@@ -444,16 +471,16 @@ class UserFrame(Tk.Toplevel):
 		Tk.Toplevel.__init__(self)
         
        #Calibration values
-		pupilX = [275, 264, 244, 280, 261, 239, 277, 259, 240]
-		pupilY = [178, 178, 178, 183, 183, 182, 188, 188, 190]
-		glintX = [278, 273, 264, 281, 272, 262, 279, 270, 259]
-		glintY = [190, 188, 190, 191, 189, 190, 190, 191, 192]
-		calibrationX = [213, 639, 1065, 213, 639, 1065, 213, 639, 1065]
-		calibrationY = [133, 133, 133, 399, 399, 399, 665, 665, 665]
+		# pupilX = [275, 264, 244, 280, 261, 239, 277, 259, 240]
+		# pupilY = [178, 178, 178, 183, 183, 182, 188, 188, 190]
+		# glintX = [278, 273, 264, 281, 272, 262, 279, 270, 259]
+		# glintY = [190, 188, 190, 191, 189, 190, 190, 191, 192]
+		# calibrationX = [213, 639, 1065, 213, 639, 1065, 213, 639, 1065]
+		# calibrationY = [133, 133, 133, 399, 399, 399, 665, 665, 665]
 
-		global aOriginal
-		global bOriginal
-		aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, calibrationX, calibrationY)
+		# global aOriginal
+		# global bOriginal
+		# aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, calibrationX, calibrationY)
 		
 		#Set up how big the gui window should be, and where it should be positioned on screen
         #Set to be slightly bigger than the video feed, and be positioned in the bottom right of the screen
@@ -548,18 +575,14 @@ class UserFrame(Tk.Toplevel):
 			
             if 'aOriginal' in globals() and 'bOriginal' in globals():
                 #print moveCount
-                if (moveCount == 0):
-					gazeXPrev, gazeYPrev = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-					moveCount += 1
-					
-                else:
+                if (moveCount == 1):
 					# Centre points of glint and pupil pass to vector
 					gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-					#if 'avgGazeX' in globals() and 'avgGazeY' in globals():
-					avgGazeX = (gazeX + gazeXPrev)/2
-					avgGazeY = (gazeY + gazeYPrev)/2
-					ATE.move_mouse(avgGazeX, avgGazeY)
+					ATE.move_mouse(gazeX, gazeY)
 					moveCount = 0
+					
+                else:
+					moveCount += 1
 					
                 infoLabel.configure(text = "Now tracking your eye!")
             else:
