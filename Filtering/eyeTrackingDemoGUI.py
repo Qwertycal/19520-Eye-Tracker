@@ -29,8 +29,8 @@ vidHeight = (screenheight/2) - 30
 #Open the video file & set it's width
 global cap
 cap = cv2.VideoCapture('Eye.mov')
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, vidWidth)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, vidHeight)
+#cap.set(cv2.CAP_PROP_FRAME_WIDTH, vidWidth)
+#cap.set(cv2.CAP_PROP_FRAME_HEIGHT, vidHeight)
 global frame_counter
 frame_counter = 0
 
@@ -74,8 +74,8 @@ def show_frame():
     ret, frame = cap.read()
     frame_counter += 1
     flipFrame = cv2.flip(frame, 1)
-    cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2RGBA)
-    cv2image = cv2.resize(flipFrame, (vidWidth, vidHeight));
+    #cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2RGBA)
+    cv2image = cv2.resize(flipFrame, (vidWidth, vidHeight))
     img1 = Image.fromarray(cv2image)
     imgtk1 = ImageTk.PhotoImage(image=img1)
     videoStream1.imgtk1 = imgtk1
@@ -135,7 +135,7 @@ def show_frame():
         x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
     
         # Move to coordinates on screen
-        #ATE.move_mouse(x,y)
+        ATE.move_mouse(x,y)
     
     videoStream1.after(5, show_frame)
 
