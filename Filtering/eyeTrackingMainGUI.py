@@ -14,6 +14,8 @@ from PIL import Image, ImageTk
 import pyautogui
 import time
 import threading
+import sys
+import os
 
 import numpy as np
 import math
@@ -41,8 +43,17 @@ class StartScreen(object):
         global vidWidth
         global vidHeight
         vidWidth = (screenwidth/4)
+        print 'vidWidth'
+        print vidWidth
         vidHeight = (screenheight/4)
-        w = vidWidth + 4
+        
+        if (sys.platform == 'win32'):
+            extraW = 4
+        elif (sys.platform == 'darwin'):
+            extraW = 82
+
+
+        w = vidWidth + extraW
         h = vidHeight + 60
         x = (screenwidth / 2) - (w / 2)
         y = (screenheight / 2) - (h / 2)
@@ -67,8 +78,8 @@ class StartScreen(object):
         quitButton = Tk.Button(self.buttonFrame, text="Quit", command=self.quitScreen)
 
         welcomeLabel.grid(row = 0, columnspan =4)
-        videoStreamInit.grid(row = 1, column = 1, columnspan = 2, sticky = 'e')
-        calibrateButton.grid(row = 1, column = 2)
+        videoStreamInit.grid(row = 1)
+        calibrateButton.grid(row = 1, column = 0)
         helpButton.grid(row = 1, column = 3)
         quitButton.grid(row = 1, column = 4)
         
@@ -86,8 +97,8 @@ class StartScreen(object):
             ret, frame = cap.read()
             #print 'frame open'
             flipFrame = cv2.flip(frame, 1)
-            #cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_RGB2GRAY)
-            cv2image = cv2.resize(flipFrame, (vidWidth, vidHeight));
+            #cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2GRAY)
+            cv2image = cv2.resize(flipFrame, (vidWidth, vidHeight))
             img1 = Image.fromarray(cv2image)
             imgtk1 = ImageTk.PhotoImage(image=img1)
             videoStreamInit.imgtk1 = imgtk1
@@ -168,6 +179,10 @@ class StartScreen(object):
     #When the help button is pressed
     def helpButton(self):
         print 'help button pressed'
+        if (sys.platform == 'win32'):
+            os.system('start <myFile>')
+        elif (sys.platform == 'darwin'):
+            os.system('open DIS_P05.pdf')
 
     #---------------------------------------------------------------------
     #When the quit button is pressed
