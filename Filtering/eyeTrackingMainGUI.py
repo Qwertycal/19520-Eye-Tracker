@@ -280,7 +280,7 @@ class CalibrationFrame(Tk.Toplevel):
         
         # create the button
         calibrateButton = Tk.Button(instructionFrame, text="Start Calibration", command=self.ovalChange)
-        #userButton = Tk.Button(instructionFrame, text = "User Frame", command=self.openUserFrame)
+        userButton = Tk.Button(instructionFrame, text = "User Frame", command=self.openUserFrame)
         exitButton = Tk.Button(instructionFrame, text="Quit", command=self.checkQuitCal)
         
         canvasFrame.grid()
@@ -289,8 +289,8 @@ class CalibrationFrame(Tk.Toplevel):
         self.canvas.grid()
         
         calibrateButton.grid(column = 0)
-        #userButton.grid(column = 1, row = 0)
-        exitButton.grid(column = 1, row = 0)
+        userButton.grid(column = 1, row = 0)
+        exitButton.grid(column = 2, row = 0)
         
         pub.subscribe(self.listener, "userFrameClosed")
 
@@ -435,64 +435,64 @@ class UserFrame(Tk.Toplevel):
     #----------------------------------------------------------------------
     #GUI setup
     def __init__(self):
-        global vidWidth
-        global vidHeight
-        vidWidth = (screenwidth/4)
-        vidHeight = (screenheight/4)
+		global vidWidth
+		global vidHeight
+		vidWidth = (screenwidth/4)
+		vidHeight = (screenheight/4)
 
         #GUI setup
-        Tk.Toplevel.__init__(self)
+		Tk.Toplevel.__init__(self)
         
-#        #Calibration values
-#        pupilX = [275, 264, 244, 280, 261, 239, 277, 259, 240]
-#        pupilY = [178, 178, 178, 183, 183, 182, 188, 188, 190]
-#        glintX = [278, 273, 264, 281, 272, 262, 279, 270, 259]
-#        glintY = [190, 188, 190, 191, 189, 190, 190, 191, 192]
-#        calibrationX = [213, 639, 1065, 213, 639, 1065, 213, 639, 1065]
-#        calibrationY = [133, 133, 133, 399, 399, 399, 665, 665, 665]
-#
-#        global aOriginal
-#        global bOriginal
-#        aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, calibrationX, calibrationY)
+       #Calibration values
+		pupilX = [275, 264, 244, 280, 261, 239, 277, 259, 240]
+		pupilY = [178, 178, 178, 183, 183, 182, 188, 188, 190]
+		glintX = [278, 273, 264, 281, 272, 262, 279, 270, 259]
+		glintY = [190, 188, 190, 191, 189, 190, 190, 191, 192]
+		calibrationX = [213, 639, 1065, 213, 639, 1065, 213, 639, 1065]
+		calibrationY = [133, 133, 133, 399, 399, 399, 665, 665, 665]
 
-        #Set up how big the gui window should be, and where it should be positioned on screen
+		global aOriginal
+		global bOriginal
+		aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY, calibrationX, calibrationY)
+		
+		#Set up how big the gui window should be, and where it should be positioned on screen
         #Set to be slightly bigger than the video feed, and be positioned in the bottom right of the screen
-        w = vidWidth + 4
-        h = vidHeight + 56
-        x = screenwidth - (w + 10)
-        y = screenheight - (h + 60)
+		w = vidWidth + 4
+		h = vidHeight + 56
+		x = screenwidth - (w + 10)
+		y = screenheight - (h + 60)
         
         #Set up the GUI
-        self.geometry('%dx%d+%d+%d' % (w, h, x, y))
-        self.title("Eye Tracking")
-        self.bind('<Escape>', quit)
+		self.geometry('%dx%d+%d+%d' % (w, h, x, y))
+		self.title("Eye Tracking")
+		self.bind('<Escape>', quit)
         
         #Create button frame
-        buttonFrame = Tk.Frame(self)
+		buttonFrame = Tk.Frame(self)
         
-        global videoStream1
+		global videoStream1
         #Create label for video to go in
-        videoStream1 = Tk.Label(self)
+		videoStream1 = Tk.Label(self)
         
-        global infoLabel
-        infoLabel = Tk.Label(self)
+		global infoLabel
+		infoLabel = Tk.Label(self)
         
-        global moveCount
-        moveCount = 0
+		global moveCount
+		moveCount = 0
         
         #Create buttons
-        recalibrateButton = Tk.Button(buttonFrame, text = "Calibrate", command = self.recalibrate)
-        quitButton = Tk.Button(buttonFrame, text = "Quit", command = self.checkQuitUser)
+		recalibrateButton = Tk.Button(buttonFrame, text = "Calibrate", command = self.recalibrate)
+		quitButton = Tk.Button(buttonFrame, text = "Quit", command = self.checkQuitUser)
         
         #Put all of the elements into the GUI
-        buttonFrame.grid(row = 2, column = 0, sticky = 'N')
+		buttonFrame.grid(row = 2, column = 0, sticky = 'N')
         
-        infoLabel.grid(row = 1, column = 0)
-        videoStream1.grid(row = 0, column = 0)
-        recalibrateButton.grid(row = 0, column = 0)
-        quitButton.grid(row = 0, column = 1)
+		infoLabel.grid(row = 1, column = 0)
+		videoStream1.grid(row = 0, column = 0)
+		recalibrateButton.grid(row = 0, column = 0)
+		quitButton.grid(row = 0, column = 1)
         
-        self.show()
+		self.show()
     
     #Show frame
     def show_frame(self):
@@ -534,7 +534,7 @@ class UserFrame(Tk.Toplevel):
             
             #draw corneal circumference
             cv2.drawContours(frameCopy,cc,-1,(0,0,255),3)
-            
+            #----------------------------------------------------
             #Code that will hopefully show the detected pupil, if uncommented
             if(frameCopy != None):
                 frameC_resized = cv2.resize(frameCopy, (vidWidth, vidHeight), interpolation = cv2.INTER_AREA)
@@ -544,20 +544,23 @@ class UserFrame(Tk.Toplevel):
                 videoStream1.imgtk1 = imgtk1
                 videoStream1.configure(image=imgtk1)
             
-            global moveCount
-		
+            global moveCount; global gazeXPrev; global gazeYPrev
+			
             if 'aOriginal' in globals() and 'bOriginal' in globals():
                 #print moveCount
-                if (moveCount == 1):
+                if (moveCount == 0):
+					gazeXPrev, gazeYPrev = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+					moveCount += 1
+					
+                else:
 					# Centre points of glint and pupil pass to vector
 					gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-					# avgGazeX = (gazeX + gazeXPrev)/2
-					# avgGazeY = (gazeY + gazeYPrev)/2
-					ATE.move_mouse(gazeX, gazeY)
+					#if 'avgGazeX' in globals() and 'avgGazeY' in globals():
+					avgGazeX = (gazeX + gazeXPrev)/2
+					avgGazeY = (gazeY + gazeYPrev)/2
+					ATE.move_mouse(avgGazeX, avgGazeY)
 					moveCount = 0
-                else:
-					#gazeXPrev, gazeYPrev = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-					moveCount += 1
+					
                 infoLabel.configure(text = "Now tracking your eye!")
             else:
                 infoLabel.configure(text = "You have not calibrated yet, please do so")
