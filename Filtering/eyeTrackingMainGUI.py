@@ -32,7 +32,7 @@ import click_callback as callback
 #Find the screen width & set the approprite size for the feed
 screenwidth, screenheight = pyautogui.size()
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 ########################################################################
 class StartScreen(object):
@@ -141,7 +141,7 @@ class StartScreen(object):
         else:
             videoStreamInit.configure(text = "You have not plugged in the camera")
             global cap
-            cap = cv2.VideoCapture(0)
+            cap = cv2.VideoCapture(1)
 
         if (not calButton):
                 videoStreamInit.after(5, self.show_frameInit)
@@ -155,7 +155,6 @@ class StartScreen(object):
     #----------------------------------------------------------------------
     #When the calibrate button is pressed
     def calibrationButton(self):
-#        cap = cv2.VideoCapture(1)
 #        if cap.isOpened():
         global calButton
         calButton = True
@@ -324,14 +323,14 @@ class CalibrationFrame(Tk.Toplevel):
         global quitButtonClick
         print "clicked start calibration %d" % iteration
         if (not quitButtonClick):
-            # if iteration > 0:
-                # prevOval = ovalList[iteration - 1]
-                # self.canvas.itemconfigure(prevOval, fill="black")
-            # if iteration < (len(ovalList)):
-                # currentOval = ovalList[iteration]
-                # self.canvas.itemconfigure(currentOval, fill="red")
-            # self.canvas.update()
-            # time.sleep(3)
+            if iteration > 0:
+                prevOval = ovalList[iteration - 1]
+                self.canvas.itemconfigure(prevOval, fill="black")
+            if iteration < (len(ovalList)):
+                currentOval = ovalList[iteration]
+                self.canvas.itemconfigure(currentOval, fill="red")
+            self.canvas.update()
+            time.sleep(3)
             
             if iteration < (len(ovalList)):
                 #Call Edge Detection of binary frame
@@ -355,69 +354,69 @@ class CalibrationFrame(Tk.Toplevel):
                 curPupilY = []
                 curGlintX = []
                 curGlintY = []
-#                while (gazeCount < 3):
-#                    countGap = 0
-#                    while(countGap < 5):
-#                        countGap+=1
-#                        ret, frame = cap.read()
-#                    ret, frame = cap.read()
-#                    threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-#                    cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
-#                    calIteration = 0
-#                    while not successfullyDetected:
-#                        ret, frame = cap.read()
-#                        threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-#                        cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
-#                        calIteration += 1
-#                        if calIteration > 100:
-#                            self.canvas.itemconfigure(currentOval, fill="orange")
-#                            self.canvas.update()
-#                            threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-#                            cv2.imshow('feed',threshPupil)
-#                    if successfullyDetected:
-#						cv2.imwrite('pic{:>05}{}.png'.format(iteration, gazeCount), frame)
-#						print ("saved image %d " % iteration)
-#						calIteration = 0
-#						curPupilX.append(cpX)
-#						curPupilY.append(cpY)
-#						curGlintX.append(ccX)
-#						curGlintY.append(ccY)
-#						# self.canvas.itemconfigure(currentOval, fill="green")
-#						# self.canvas.update()
-#					
-#                    gazeCount += 1
-#				
-#                countPupilX = 0
-#                for e in curPupilX:
-#					countPupilX += e
-#                avgPupilX = countPupilX/len(curPupilX)
-#					
-#                countPupilY = 0
-#                for e in curPupilY:
-#				    countPupilY += e
-#                avgPupilY = countPupilY/len(curPupilY)
-#				
-#                countGlintX = 0
-#                for e in curGlintX:
-#					countGlintX += e
-#                avgGlintX = countGlintX/len(curGlintX)
-#					
-#                countGlintY = 0
-#                for e in curGlintY:
-#					countGlintY += e
-#                avgGlintY = countGlintY/len(curGlintY)
-#				
-#                pupilX.append(avgPupilX)
-#                pupilY.append(avgPupilY)
-#                glintX.append(avgGlintX)
-#                glintY.append(avgGlintY)
-#				
+                while (gazeCount < 3):
+                    countGap = 0
+                    while(countGap < 5):
+                        countGap+=1
+                        ret, frame = cap.read()
+                    ret, frame = cap.read()
+                    threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+                    cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+                    calIteration = 0
+                    while not successfullyDetected:
+                        ret, frame = cap.read()
+                        threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+                        cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+                        calIteration += 1
+                        if calIteration > 100:
+                            self.canvas.itemconfigure(currentOval, fill="orange")
+                            self.canvas.update()
+                            threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+                            cv2.imshow('feed',threshPupil)
+                    if successfullyDetected:
+						cv2.imwrite('pic{:>05}{}.png'.format(iteration, gazeCount), frame)
+						print ("saved image %d " % iteration)
+						calIteration = 0
+						curPupilX.append(cpX)
+						curPupilY.append(cpY)
+						curGlintX.append(ccX)
+						curGlintY.append(ccY)
+						# self.canvas.itemconfigure(currentOval, fill="green")
+						# self.canvas.update()
+					
+                    gazeCount += 1
+				
+                countPupilX = 0
+                for e in curPupilX:
+					countPupilX += e
+                avgPupilX = countPupilX/len(curPupilX)
+					
+                countPupilY = 0
+                for e in curPupilY:
+				    countPupilY += e
+                avgPupilY = countPupilY/len(curPupilY)
+				
+                countGlintX = 0
+                for e in curGlintX:
+					countGlintX += e
+                avgGlintX = countGlintX/len(curGlintX)
+					
+                countGlintY = 0
+                for e in curGlintY:
+					countGlintY += e
+                avgGlintY = countGlintY/len(curGlintY)
+				
+                pupilX.append(avgPupilX)
+                pupilY.append(avgPupilY)
+                glintX.append(avgGlintX)
+                glintY.append(avgGlintY)
+                
                 iteration += 1
 				
                 if iteration == (len(ovalList)):
-#                    global aOriginal
-#                    global bOriginal
-#                    aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY,screenCoordinatesX, screenCoordinatesY)
+                    global aOriginal
+                    global bOriginal
+                    aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY,screenCoordinatesX, screenCoordinatesY)
                     self.canvas.itemconfigure(currentOval, fill="black")
                     iteration += 1
                     self.openUserFrame()
@@ -545,7 +544,7 @@ class CalibrationFrame(Tk.Toplevel):
     def hide(self):
         self.withdraw()
         if self.toplevel is not None:
-            self.toplevel.withdraw()
+            self.toplevel.destroy()
     #----------------------------------------------------------------------
     #Called when exit is pressed
     def checkQuitCal(self):
