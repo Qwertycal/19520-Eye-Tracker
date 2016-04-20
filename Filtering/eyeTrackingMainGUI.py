@@ -200,184 +200,182 @@ class StartScreen(object):
 class CalibrationFrame(Tk.Toplevel):
     #----------------------------------------------------------------------
     #GUI setup
-    def __init__(self):
-        """Constructor"""
-        Tk.Toplevel.__init__(self)
-        self.overrideredirect(True)
-        self.geometry("{0}x{1}+0+0".format(screenwidth, screenheight))
+	def __init__(self):
+		"""Constructor"""
+		Tk.Toplevel.__init__(self)
+		self.overrideredirect(True)
+		self.geometry("{0}x{1}+0+0".format(screenwidth, screenheight))
         
-        #Set up global variables
-        global tWidth
-        global tHeight
+		#Set up global variables
+		global tWidth
+		global tHeight
         
         #tWidth is the width of the screen divided by 3, this will be used to
         #calculate the x coordinates of the ovals
-        tWidth = screenwidth/3
+		tWidth = screenwidth/3
         
         #tHeight is the height of the screen divide by 3, used to calculate the
         #y coorindates of the ovals
-        tHeight = screenheight/3
+		tHeight = screenheight/3
         
         #Set the size of the circle the user will look at
-        dotSize = 26
+		dotSize = 26
         
         #Calculate the x and y coordinates for each of the nine circles
         #There are three x points, with 1 being the left most x point, and
         #3 being the rightmost
         #These x points are the x coordinate for the top left corner of the circle
-        x1 = (np.mean([0, tWidth]) - (dotSize/2))
-        x2 = x1 + tWidth
-        x3 = x2 + tWidth
+		x1 = (np.mean([0, tWidth]) - (dotSize/2))
+		x2 = x1 + tWidth
+		x3 = x2 + tWidth
         
         #y1 is the top most y coordinate, y3 is the bottom most y coordinate
-        y1 = (np.mean([0,tHeight]) - (dotSize/2))
-        y2 = y1 + tHeight
-        y3 = y2 +tHeight
+		y1 = (np.mean([0,tHeight]) - (dotSize/2))
+		y2 = y1 + tHeight
+		y3 = y2 +tHeight
         
         #Set up a list to hold all of the ovals on the screen
-        global ovalList
-        ovalList = []
+		global ovalList
+		ovalList = []
         
         #Add frames and a canvas to the GUI
-        canvasFrame = Tk.Frame(self, width = screenwidth, height = (screenheight - 100))
-        instructionFrame = Tk.Frame(self, width = screenwidth, height = 50)
-        self.canvas = Tk.Canvas(canvasFrame, width = screenwidth, height = (screenheight - 100))
+		canvasFrame = Tk.Frame(self, width = screenwidth, height = (screenheight - 100))
+		instructionFrame = Tk.Frame(self, width = screenwidth, height = 50)
+		self.canvas = Tk.Canvas(canvasFrame, width = screenwidth, height = (screenheight - 100))
         
         #Add the ovals to the canvas, and add each oval to the list
-        oval1 = self.canvas.create_oval(x1, y1, (x1 + dotSize), (y1 + dotSize), fill = "grey") #top left
-        ovalList.append(oval1)
-        oval2 = self.canvas.create_oval(x2, y1, (x2 + dotSize), (y1 + dotSize), fill = "gray") #top middle
-        ovalList.append(oval2)
-        oval3 = self.canvas.create_oval(x3, y1, (x3 + dotSize), (y1 + dotSize), fill = "gray") #top right
-        ovalList.append(oval3)
+		oval1 = self.canvas.create_oval(x1, y1, (x1 + dotSize), (y1 + dotSize), fill = "grey") #top left
+		ovalList.append(oval1)
+		oval2 = self.canvas.create_oval(x2, y1, (x2 + dotSize), (y1 + dotSize), fill = "gray") #top middle
+		ovalList.append(oval2)
+		oval3 = self.canvas.create_oval(x3, y1, (x3 + dotSize), (y1 + dotSize), fill = "gray") #top right
+		ovalList.append(oval3)
         
-        oval4 = self.canvas.create_oval(x1, y2, (x1 + dotSize), (y2 + dotSize), fill = "gray") #middle left
-        ovalList.append(oval4)
-        oval5 = self.canvas.create_oval(x2, y2, (x2 + dotSize), (y2 + dotSize), fill = "gray") #middle middle
-        ovalList.append(oval5)
-        oval6 = self.canvas.create_oval(x3, y2, (x3 + dotSize), (y2 + dotSize), fill = "gray") #middle right
-        ovalList.append(oval6)
+		oval4 = self.canvas.create_oval(x1, y2, (x1 + dotSize), (y2 + dotSize), fill = "gray") #middle left
+		ovalList.append(oval4)
+		oval5 = self.canvas.create_oval(x2, y2, (x2 + dotSize), (y2 + dotSize), fill = "gray") #middle middle
+		ovalList.append(oval5)
+		oval6 = self.canvas.create_oval(x3, y2, (x3 + dotSize), (y2 + dotSize), fill = "gray") #middle right
+		ovalList.append(oval6)
         
-        oval7 = self.canvas.create_oval(x1, y3, (x1 + dotSize), (y3 + dotSize), fill = "gray") #bottom left
-        ovalList.append(oval7)
-        oval8 = self.canvas.create_oval(x2, y3, (x2 + dotSize), (y3 + dotSize), fill = "gray") #bottom middle
-        ovalList.append(oval8)
-        oval9 = self.canvas.create_oval(x3, y3, (x3 + dotSize), (y3 + dotSize), fill = "gray") #botton right
-        ovalList.append(oval9)
+		oval7 = self.canvas.create_oval(x1, y3, (x1 + dotSize), (y3 + dotSize), fill = "gray") #bottom left
+		ovalList.append(oval7)
+		oval8 = self.canvas.create_oval(x2, y3, (x2 + dotSize), (y3 + dotSize), fill = "gray") #bottom middle
+		ovalList.append(oval8)
+		oval9 = self.canvas.create_oval(x3, y3, (x3 + dotSize), (y3 + dotSize), fill = "gray") #botton right
+		ovalList.append(oval9)
         
         #Set up all the global variables needed for calibration
-        screenLocX1 = tWidth/2
-        screenLocX2 = screenLocX1 + tWidth
-        screenLocX3 = screenLocX2 + tWidth
+		screenLocX1 = tWidth/2
+		screenLocX2 = screenLocX1 + tWidth
+		screenLocX3 = screenLocX2 + tWidth
         
-        screenLocY1 = tHeight/2
-        screenLocY2 = screenLocY1 + tHeight
-        screenLocY3 = screenLocY2 + tHeight
+		screenLocY1 = tHeight/2
+		screenLocY2 = screenLocY1 + tHeight
+		screenLocY3 = screenLocY2 + tHeight
         
-        global screenCoordinatesX
-        global screenCoordinatesY
-        screenCoordinatesX = [screenLocX1, screenLocX2, screenLocX3,
+		global screenCoordinatesX
+		global screenCoordinatesY
+		screenCoordinatesX = [screenLocX1, screenLocX2, screenLocX3,
                               screenLocX1, screenLocX2, screenLocX3,
                               screenLocX1, screenLocX2, screenLocX3]
                               
-        screenCoordinatesY = [screenLocY1, screenLocY1, screenLocY1,
+		screenCoordinatesY = [screenLocY1, screenLocY1, screenLocY1,
                               screenLocY2, screenLocY2, screenLocY2,
                               screenLocY3, screenLocY3, screenLocY3]
                               
-        global pupilX
-        global pupilY
-        global glintX
-        global glintY
-        pupilX = []
-        pupilY = []
-        glintX = []
-        glintY = []
+		global pupilX
+		global pupilY
+		global glintX
+		global glintY
+		pupilX = []
+		pupilY = []
+		glintX = []
+		glintY = []
       
-        global iteration
-        iteration = 0
+		global iteration
+		iteration = 0
 
         # create the button
-        calibrateButton = Tk.Button(instructionFrame, text="Start Calibration", command=self.ovalChange)
-        checkFeedButton = Tk.Button(instructionFrame, text = "Check Feed", command=self.checkFeedFrame)
-        exitButton = Tk.Button(instructionFrame, text="Quit", command=self.checkQuitCal)
+		calibrateButton = Tk.Button(instructionFrame, text="Start Calibration", command=self.ovalChange)
+		checkFeedButton = Tk.Button(instructionFrame, text = "Check Feed", command=self.checkFeedFrame)
+		exitButton = Tk.Button(instructionFrame, text="Quit", command=self.checkQuitCal)
         
-        canvasFrame.grid()
-        instructionFrame.grid(row = 1)
+		canvasFrame.grid()
+		instructionFrame.grid(row = 1)
         
-        self.canvas.grid()
-        self.toplevel = None
+		self.canvas.grid()
+		self.toplevel = None
         
-        calibrateButton.grid(column = 0)
-        checkFeedButton.grid(column = 1, row = 0)
-        exitButton.grid(column = 2, row = 0)
+		calibrateButton.grid(column = 0)
+		checkFeedButton.grid(column = 1, row = 0)
+		exitButton.grid(column = 2, row = 0)
         
-        pub.subscribe(self.listener, "userFrameClosed")
+		pub.subscribe(self.listener, "userFrameClosed")
 
-        global quitButtonClick
-        quitButtonClick = False
-#
-#    def globalVariables(self):
-#            
-#        print 'globals set'
+		global quitButtonClick
+		quitButtonClick = False
+
     #--------------------------------------------------------------------
     #When the calibration button is pressed
     #Used to show which circle to look at, by displaying the circle in red
-    def ovalChange(self):
-        global iteration
-        global quitButtonClick
-        print "clicked start calibration %d" % iteration
-        if (not quitButtonClick):
-            if iteration > 0:
-                prevOval = ovalList[iteration - 1]
-                self.canvas.itemconfigure(prevOval, fill="black")
-            if iteration < (len(ovalList)):
-                currentOval = ovalList[iteration]
-                self.canvas.itemconfigure(currentOval, fill="red")
-            self.canvas.update()
-            time.sleep(3)
+	def ovalChange(self):
+		global iteration
+		global quitButtonClick
+		print "clicked start calibration %d" % iteration
+		if (not quitButtonClick):
+			if iteration > 0:
+				prevOval = ovalList[iteration - 1]
+				self.canvas.itemconfigure(prevOval, fill="black")
+			if iteration < (len(ovalList)):
+				currentOval = ovalList[iteration]
+				self.canvas.itemconfigure(currentOval, fill="red")
+			self.canvas.update()
+			time.sleep(3)
             
-            if iteration < (len(ovalList)):
-                #Call Edge Detection of binary frame
+			if iteration < (len(ovalList)):
+				#Call Edge Detection of binary frame
 				
-                if iteration > 0:
-                    prevOval = ovalList[iteration - 1]
-                    self.canvas.itemconfigure(prevOval, fill="black")
+				if iteration > 0:
+					prevOval = ovalList[iteration - 1]
+					self.canvas.itemconfigure(prevOval, fill="black")
 				
-                currentOval = ovalList[iteration]
-                self.canvas.itemconfigure(currentOval, fill="red")
-                self.canvas.update()
+				currentOval = ovalList[iteration]
+				self.canvas.itemconfigure(currentOval, fill="red")
+				self.canvas.update()
 				
-                count = 0
-                while(count < 12):
-                    count+=1
-                    ret, frame = cap.read()
+				count = 0
+				while(count < 12):
+					count+=1
+					ret, frame = cap.read()
 				
-                gazeCount = 0
+				gazeCount = 0
 				
-                curPupilX = []
-                curPupilY = []
-                curGlintX = []
-                curGlintY = []
-                while (gazeCount < 3):
-                    countGap = 0
-                    while(countGap < 4):
-                        countGap+=1
-                        ret, frame = cap.read()
-                    ret, frame = cap.read()
-                    threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-                    cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
-                    calIteration = 0
-                    while not successfullyDetected:
-                        ret, frame = cap.read()
-                        threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-                        cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
-                        calIteration += 1
-                        if calIteration > 100:
-                            self.canvas.itemconfigure(currentOval, fill="orange")
-                            self.canvas.update()
-                            threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
-                            cv2.imshow('feed',threshPupil)
-                    if successfullyDetected:
+				curPupilX = []
+				curPupilY = []
+				curGlintX = []
+				curGlintY = []
+				while (gazeCount < 3):
+					countGap = 0
+					while(countGap < 4):
+						countGap+=1
+						ret, frame = cap.read()
+					ret, frame = cap.read()
+					threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+					cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+					calIteration = 0
+					while not successfullyDetected:
+						ret, frame = cap.read()
+						threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+						cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+						calIteration += 1
+						if calIteration > 100:
+							self.canvas.itemconfigure(currentOval, fill="orange")
+							self.canvas.update()
+							threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+							self.checkFeedFrame()
+					if successfullyDetected:
+						self.removewindow()
 						cv2.imwrite('pic{:>05}{}.png'.format(iteration, gazeCount), frame)
 						print ("saved image %d " % iteration)
 						calIteration = 0
@@ -388,44 +386,44 @@ class CalibrationFrame(Tk.Toplevel):
 						# self.canvas.itemconfigure(currentOval, fill="green")
 						# self.canvas.update()
 					
-                    gazeCount += 1
+					gazeCount += 1
 				
-                countPupilX = 0
-                for e in curPupilX:
+				countPupilX = 0
+				for e in curPupilX:
 					countPupilX += e
-                avgPupilX = countPupilX/len(curPupilX)
+				avgPupilX = countPupilX/len(curPupilX)
 					
-                countPupilY = 0
-                for e in curPupilY:
-				    countPupilY += e
-                avgPupilY = countPupilY/len(curPupilY)
+				countPupilY = 0
+				for e in curPupilY:
+					countPupilY += e
+				avgPupilY = countPupilY/len(curPupilY)
 				
-                countGlintX = 0
-                for e in curGlintX:
+				countGlintX = 0
+				for e in curGlintX:
 					countGlintX += e
-                avgGlintX = countGlintX/len(curGlintX)
+				avgGlintX = countGlintX/len(curGlintX)
 					
-                countGlintY = 0
-                for e in curGlintY:
+				countGlintY = 0
+				for e in curGlintY:
 					countGlintY += e
-                avgGlintY = countGlintY/len(curGlintY)
+				avgGlintY = countGlintY/len(curGlintY)
 				
-                pupilX.append(avgPupilX)
-                pupilY.append(avgPupilY)
-                glintX.append(avgGlintX)
-                glintY.append(avgGlintY)
+				pupilX.append(avgPupilX)
+				pupilY.append(avgPupilY)
+				glintX.append(avgGlintX)
+				glintY.append(avgGlintY)
                 
-                iteration += 1
+				iteration += 1
 				
-                if iteration == (len(ovalList)):
-                    global aOriginal
-                    global bOriginal
-                    aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY,screenCoordinatesX, screenCoordinatesY)
-                    self.canvas.itemconfigure(currentOval, fill="black")
-                    iteration += 1
-                    self.openUserFrame()
-                else:
-                	self.ovalChange()
+				if iteration == (len(ovalList)):
+					global aOriginal
+					global bOriginal
+					aOriginal, bOriginal =  GCU.calibration(pupilX, pupilY, glintX, glintY,screenCoordinatesX, screenCoordinatesY)
+					self.canvas.itemconfigure(currentOval, fill="black")
+					iteration += 1
+					self.openUserFrame()
+				else:
+					self.ovalChange()
 					#print 'pupilX current'
 					#print pupilX
         
@@ -442,99 +440,93 @@ class CalibrationFrame(Tk.Toplevel):
    
    #---------------------------------------------------------------------
     #Open the check feed frame
-    def checkFeedFrame(self):
-        if self.toplevel is None:
-            self.toplevel = Tk.Toplevel(self)
-            self.toplevel.protocol('WM_DELETE_WINDOW', self.removewindow)
-            global vidWidth
-            global vidHeight
-            vidWidth = (screenwidth/4)
-            vidHeight = (screenheight/4)
+	def checkFeedFrame(self):
+		if self.toplevel is None:
+			self.toplevel = Tk.Toplevel(self)
+			self.toplevel.protocol('WM_DELETE_WINDOW', self.removewindow)
+			global vidWidth
+			global vidHeight
+			vidWidth = (screenwidth/4)
+			vidHeight = (screenheight/4)
             
             #Set up how big the gui window should be, and where it should be positioned on screen
             #Set to be slightly bigger than the video feed, and be positioned in the bottom right of the screen
-            w = vidWidth + 4
-            h = vidHeight + 4
-            x = screenwidth - (w + 10)
-            y = screenheight - (h + 60)
+			w = vidWidth + 4
+			h = vidHeight + 4
+			x = screenwidth - (w + 10)
+			y = screenheight - (h + 60)
             
-            #Set up the GUI
-            self.toplevel.geometry('%dx%d+%d+%d' % (w, h, x, y))
-            self.toplevel.title("Eye Tracking")
+			#Set up the GUI
+			self.toplevel.geometry('%dx%d+%d+%d' % (w, h, x, y))
+			self.toplevel.title("Eye Tracking")
             #self.bind("<FocusOut>", self.hide)
             #self.bind("<Button-1>", self.hide)
             
-            global videoStream1
+			global videoStream1
             #Create label for video to go in
-            videoStream1 = Tk.Label(self.toplevel)
-            videoStream1.grid(row = 0, column = 0)
+			videoStream1 = Tk.Label(self.toplevel)
+			videoStream1.grid(row = 0, column = 0)
         
-            self.show_frame()
+			self.show_frame()
         
-        else:
-            self.toplevel.lift()
-#        print 'open check feed'
-#        #self.hide()
-#        subFrame = CheckFeedFrame()
+		else:
+			self.toplevel.lift()
+	
+	def removewindow(self):
+		try:
+			self.toplevel.destroy()
+			self.toplevel = None
 
-#    #Hide the calibration frame
-#    def hide(self):
-#        self.withdraw()
-    def removewindow(self):
-        self.toplevel.destroy()
-        self.toplevel = None
-
-    #Show frame
-    def show_frame(self):
-        #Read the input feed, flip it, resize it and show it in the corresponding label
-        #Original, flipped feed
+	def show_frame(self):
+		#Read the input feed, flip it, resize it and show it in the corresponding label
+		#Original, flipped feed
         #print 'user frame'
-        ret, frame = cap.read()
-        flipFrame = cv2.flip(frame, 1)
-        cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2GRAY)
-        cv2image = cv2.resize(flipFrame, (vidWidth, vidHeight));
-        img1 = Image.fromarray(cv2image)
-        imgtk1 = ImageTk.PhotoImage(image=img1)
-        videoStream1.imgtk1 = imgtk1
-        videoStream1.configure(image=imgtk1)
+		ret, frame = cap.read()
+		flipFrame = cv2.flip(frame, 1)
+		cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2GRAY)
+		cv2image = cv2.resize(flipFrame, (vidWidth, vidHeight));
+		img1 = Image.fromarray(cv2image)
+		imgtk1 = ImageTk.PhotoImage(image=img1)
+		videoStream1.imgtk1 = imgtk1
+		videoStream1.configure(image=imgtk1)
         
         #Call the threholding function
-        threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+		threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
         
         #Call Edge Detection of binary frame
-        cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+		cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
         #Implement functionality that was used in main to draw around the pupil and glint
         #print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
         #print successfullyDetected
-        if cpX is None or cpY is None or ccX is None or ccY is None:
-            print('pupil or corneal not detected, skipping...')
+		if cpX is None or cpY is None or ccX is None or ccY is None:
+			print('pupil or corneal not detected, skipping...')
         #x = 1
-        else:
-            # Ellipse Fitting
-            frameCopy = frame.copy()
+		else:
+			# Ellipse Fitting
+			frameCopy = frame.copy()
             
             #draw pupil centre
-            cv2.circle(frameCopy, (cpX,cpY),3,(0,255,0),-1)
+			cv2.circle(frameCopy, (cpX,cpY),3,(0,255,0),-1)
             
             #draw pupil circumference
-            cv2.drawContours(frameCopy,cp,-1,(0,0,255),3)
+			cv2.drawContours(frameCopy,cp,-1,(0,0,255),3)
             
             #draw corneal centre
-            cv2.circle(frameCopy, (ccX,ccY),3,(0,255,0),-1)
+			cv2.circle(frameCopy, (ccX,ccY),3,(0,255,0),-1)
             
             #draw corneal circumference
-            cv2.drawContours(frameCopy,cc,-1,(0,0,255),3)
+			cv2.drawContours(frameCopy,cc,-1,(0,0,255),3)
             #----------------------------------------------------
             #Code that will hopefully show the detected pupil, if uncommented
-            if(frameCopy != None):
-                frameC_resized = cv2.resize(frameCopy, (vidWidth, vidHeight), interpolation = cv2.INTER_AREA)
-                frameC_resized = cv2.flip(frameC_resized, 1)
-                img1 = Image.fromarray(frameC_resized)
-                imgtk1 = ImageTk.PhotoImage(image=img1)
-                videoStream1.imgtk1 = imgtk1
-                videoStream1.configure(image=imgtk1)
+			if(frameCopy != None):
+				frameC_resized = cv2.resize(frameCopy, (vidWidth, vidHeight), interpolation = cv2.INTER_AREA)
+				frameC_resized = cv2.flip(frameC_resized, 1)
+				img1 = Image.fromarray(frameC_resized)
+				imgtk1 = ImageTk.PhotoImage(image=img1)
+				videoStream1.imgtk1 = imgtk1
+				videoStream1.configure(image=imgtk1)
 
-        videoStream1.after(5, self.show_frame)
+		videoStream1.after(5, self.show_frame)
 
     #---------------------------------------------------------------------
     #Open the user frame
