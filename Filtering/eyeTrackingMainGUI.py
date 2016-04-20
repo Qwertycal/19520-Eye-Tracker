@@ -1,9 +1,10 @@
 #author: Rachel Hutchinson
 #date created: 28th March
-#description: shows the original feed, and has two buttons, one with the option to
-#recalibrate the system, and the other with the option to quit
-#this includes the code from the original main calls other mehtods from their seperate scripts
+#description: shows the original feed, and has three buttons, one with the option to
+#Calibrate the system, one to show a help file and the other with the option to quit
+#This includes the code from the original main and calls other methods from their separate scripts
 
+#Import necessary packages
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
@@ -29,9 +30,10 @@ import imgThreshold
 import getCalibrationUnknowns as GCU
 import click_callback as callback
 
-#Find the screen width & set the approprite size for the feed
+#Find the screen width & height
 screenwidth, screenheight = pyautogui.size()
 
+#Set the input capture port, depending on the system
 if (sys.platform == 'win32'):
 	capVal = 0
 elif (sys.platform == 'darwin'):
@@ -39,24 +41,28 @@ elif (sys.platform == 'darwin'):
 cap = cv2.VideoCapture(capVal)
 
 ########################################################################
+#The screen shown when the system is started
 class StartScreen(object):
     
     #----------------------------------------------------------------------
+	#GUI set up
     def __init__(self, parent):
-        """Constructor"""
+		
+		#Set the size of the video feed to be shown, relevant to the screen size
         global vidWidth
         global vidHeight
         vidWidth = (screenwidth/4)
-        print 'vidWidth'
-        print vidWidth
         vidHeight = (screenheight/4)
         
+		#Set up OS specific variables that alter the size of the GUI frame
         if (sys.platform == 'win32'):
             extraW = 4
         elif (sys.platform == 'darwin'):
             extraW = 82
-
-
+		
+		#Set up variables which specify the size and position of the user frame
+		#w and h set width and height of frame
+		#x and y set the position of the top corner of the frame
         w = vidWidth + extraW
         h = vidHeight + 60
         x = (screenwidth / 2) - (w / 2)
@@ -114,7 +120,7 @@ class StartScreen(object):
             #Call Edge Detection of binary frame
             cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
             #Implement functionality that was used in main to draw around the pupil and glint
-            #print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
+            print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
             #print successfullyDetected
             if cpX is None or cpY is None or ccX is None or ccY is None:
                 print('pupil or corneal not detected, skipping...')
@@ -609,7 +615,7 @@ class UserFrame(Tk.Toplevel):
 		self.bind('m', self.mouseControlToggle)
 		self.protocol('WM_DELETE_WINDOW', self.checkQuitUser)
 		
-		#Create button frame
+		#Create button  m
 		buttonFrame = Tk.Frame(self)
         
 		global videoStream1
@@ -643,7 +649,7 @@ class UserFrame(Tk.Toplevel):
         #print 'user frame'
 		ret, frame = cap.read()
 		flipFrame = cv2.flip(frame, 1)
-		cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2GRAY)
+		#cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2GRAY)
 		cv2image = cv2.resize(flipFrame, (vidWidth, vidHeight));
 		img1 = Image.fromarray(cv2image)
 		imgtk1 = ImageTk.PhotoImage(image=img1)
@@ -656,7 +662,7 @@ class UserFrame(Tk.Toplevel):
         #Call Edge Detection of binary frame
 		cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
         #Implement functionality that was used in main to draw around the pupil and glint
-        #print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
+		print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
         #print successfullyDetected
 		if cpX is None or cpY is None or ccX is None or ccY is None:
 			print('pupil or corneal not detected, skipping...')
@@ -691,14 +697,14 @@ class UserFrame(Tk.Toplevel):
 			if mouseToggle:	
 				if 'aOriginal' in globals() and 'bOriginal' in globals():
 					#print moveCount
-					if (moveCount == 1):
+					# if (moveCount == 1):
 						# Centre points of glint and pupil pass to vector
-						gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-						ATE.move_mouse(gazeX, gazeY)
-						moveCount = 0
+					gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+					ATE.move_mouse(gazeX, gazeY)
+						# moveCount = 0
 					
-					else:
-						moveCount += 1
+					# else:
+						# moveCount += 1
 					
 					infoLabel.configure(text = "Now tracking your eye!")
 				else:
