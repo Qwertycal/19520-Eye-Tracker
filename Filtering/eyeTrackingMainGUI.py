@@ -32,7 +32,11 @@ import click_callback as callback
 #Find the screen width & set the approprite size for the feed
 screenwidth, screenheight = pyautogui.size()
 
-cap = cv2.VideoCapture(1)
+if (sys.platform == 'win32'):
+	capVal = 0
+elif (sys.platform == 'darwin'):
+	capVal = 1
+cap = cv2.VideoCapture(capVal)
 
 ########################################################################
 class StartScreen(object):
@@ -141,7 +145,7 @@ class StartScreen(object):
         else:
             videoStreamInit.configure(text = "You have not plugged in the camera")
             global cap
-            cap = cv2.VideoCapture(1)
+            cap = cv2.VideoCapture(capVal)
 
         if (not calButton):
                 videoStreamInit.after(5, self.show_frameInit)
@@ -178,7 +182,7 @@ class StartScreen(object):
     def helpButton(self):
         print 'help button pressed'
         if (sys.platform == 'win32'):
-            os.system('start <myFile>')
+            os.system('start MM113_Tutorial_5_Mathematical_Modelling_in_Excel.pdf')
         elif (sys.platform == 'darwin'):
             os.system('open DIS_P05.pdf')
 
@@ -344,7 +348,7 @@ class CalibrationFrame(Tk.Toplevel):
                 self.canvas.update()
 				
                 count = 0
-                while(count < 20):
+                while(count < 12):
                     count+=1
                     ret, frame = cap.read()
 				
@@ -356,7 +360,7 @@ class CalibrationFrame(Tk.Toplevel):
                 curGlintY = []
                 while (gazeCount < 3):
                     countGap = 0
-                    while(countGap < 5):
+                    while(countGap < 4):
                         countGap+=1
                         ret, frame = cap.read()
                     ret, frame = cap.read()
@@ -530,7 +534,6 @@ class CalibrationFrame(Tk.Toplevel):
                 videoStream1.imgtk1 = imgtk1
                 videoStream1.configure(image=imgtk1)
 
-
         videoStream1.after(5, self.show_frame)
 
     #---------------------------------------------------------------------
@@ -544,7 +547,10 @@ class CalibrationFrame(Tk.Toplevel):
     def hide(self):
         self.withdraw()
         if self.toplevel is not None:
-            self.toplevel.destroy()
+			print 'toplevel destroy'
+			self.toplevel.destroy()
+			
+			#try destroy
     #----------------------------------------------------------------------
     #Called when exit is pressed
     def checkQuitCal(self):
@@ -576,14 +582,14 @@ class UserFrame(Tk.Toplevel):
     
     #----------------------------------------------------------------------
     #GUI setup
-    def __init__(self):
-        global vidWidth
-        global vidHeight
-        vidWidth = (screenwidth/4)
-        vidHeight = (screenheight/4)
+	def __init__(self):
+		global vidWidth
+		global vidHeight
+		vidWidth = (screenwidth/4)
+		vidHeight = (screenheight/4)
 
         #GUI setup
-        Tk.Toplevel.__init__(self)
+		Tk.Toplevel.__init__(self)
         
        #Calibration values
         # pupilX = [275, 264, 244, 280, 261, 239, 277, 259, 240]
@@ -599,140 +605,160 @@ class UserFrame(Tk.Toplevel):
         
         #Set up how big the gui window should be, and where it should be positioned on screen
         #Set to be slightly bigger than the video feed, and be positioned in the bottom right of the screen
-        w = vidWidth + 4
-        h = vidHeight + 56
-        x = screenwidth - (w + 10)
-        y = screenheight - (h + 60)
+		w = vidWidth + 4
+		h = vidHeight + 56
+		if (sys.platform == 'win32'):
+			#x = screenwidth - (w + 10)
+			y = screenheight - (h + 70)
+		elif (sys.platform == 'darwin'):
+			#x = screenwidth - (w + 10)
+			y = screenheight - (h + 60)
+		x = screenwidth - (w + 10)
+		global mouseToggle 
+		mouseToggle = True
         
         #Set up the GUI
-        self.geometry('%dx%d+%d+%d' % (w, h, x, y))
-        self.title("Eye Tracking")
-        self.bind('<Escape>', self.checkQuitUser)
-        self.protocol('WM_DELETE_WINDOW', self.checkQuitUser)
+		self.geometry('%dx%d+%d+%d' % (w, h, x, y))
+		self.title("Eye Tracking")
+		self.bind('<Escape>', self.checkEscapeQuitUser)
+		self.bind('m', self.mouseControlToggle)
+		self.protocol('WM_DELETE_WINDOW', self.checkQuitUser)
+		
+		#Create button frame
+		buttonFrame = Tk.Frame(self)
         
-        #Create button frame
-        buttonFrame = Tk.Frame(self)
+		global videoStream1
+		#Create label for video to go in
+		videoStream1 = Tk.Label(self)
         
-        global videoStream1
-        #Create label for video to go in
-        videoStream1 = Tk.Label(self)
+		global infoLabel
+		infoLabel = Tk.Label(self)
         
-        global infoLabel
-        infoLabel = Tk.Label(self)
-        
-        global moveCount
-        moveCount = 0
+		global moveCount
+		moveCount = 0
         
         #Create buttons
-        recalibrateButton = Tk.Button(buttonFrame, text = "Calibrate", command = self.recalibrate)
-        quitButton = Tk.Button(buttonFrame, text = "Quit", command = self.checkQuitUser)
+		recalibrateButton = Tk.Button(buttonFrame, text = "Calibrate", command = self.recalibrate)
+		quitButton = Tk.Button(buttonFrame, text = "Quit", command = self.checkQuitUser)
         
         #Put all of the elements into the GUI
-        buttonFrame.grid(row = 2, column = 0, sticky = 'N')
+		buttonFrame.grid(row = 2, column = 0, sticky = 'N')
         
-        infoLabel.grid(row = 1, column = 0)
-        videoStream1.grid(row = 0, column = 0)
-        recalibrateButton.grid(row = 0, column = 0)
-        quitButton.grid(row = 0, column = 1)
-        
-        self.show()
+		infoLabel.grid(row = 1, column = 0)
+		videoStream1.grid(row = 0, column = 0)
+		recalibrateButton.grid(row = 0, column = 0)
+		quitButton.grid(row = 0, column = 1)
+       
+		self.show()
     
     #Show frame
-    def show_frame(self):
-        #Read the input feed, flip it, resize it and show it in the corresponding label
+	def show_frame(self):
+		#Read the input feed, flip it, resize it and show it in the corresponding label
         #Original, flipped feed
         #print 'user frame'
-        ret, frame = cap.read()
-        flipFrame = cv2.flip(frame, 1)
-        cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2GRAY)
-        cv2image = cv2.resize(flipFrame, (vidWidth, vidHeight));
-        img1 = Image.fromarray(cv2image)
-        imgtk1 = ImageTk.PhotoImage(image=img1)
-        videoStream1.imgtk1 = imgtk1
-        videoStream1.configure(image=imgtk1)
+		ret, frame = cap.read()
+		flipFrame = cv2.flip(frame, 1)
+		cv2image = cv2.cvtColor(flipFrame, cv2.COLOR_BGR2GRAY)
+		cv2image = cv2.resize(flipFrame, (vidWidth, vidHeight));
+		img1 = Image.fromarray(cv2image)
+		imgtk1 = ImageTk.PhotoImage(image=img1)
+		videoStream1.imgtk1 = imgtk1
+		videoStream1.configure(image=imgtk1)
         
         #Call the threholding function
-        threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
+		threshPupil, threshGlint = imgThreshold.imgThreshold(frame)
         
         #Call Edge Detection of binary frame
-        cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
+		cpX,cpY,cp,ccX,ccY,cc,successfullyDetected = edgeDet.edgeDetectionAlgorithm(threshPupil,threshGlint)
         #Implement functionality that was used in main to draw around the pupil and glint
         #print('cpX: ', cpX, ' cpY: ', cpY, ' ccX: ', ccX, ' ccY: ', ccY)
         #print successfullyDetected
-        if cpX is None or cpY is None or ccX is None or ccY is None:
-            print('pupil or corneal not detected, skipping...')
+		if cpX is None or cpY is None or ccX is None or ccY is None:
+			print('pupil or corneal not detected, skipping...')
 			#x = 1
-        else:
+		else:
             # Ellipse Fitting
-            frameCopy = frame.copy()
+			frameCopy = frame.copy()
             
             #draw pupil centre
-            cv2.circle(frameCopy, (cpX,cpY),3,(0,255,0),-1)
+			cv2.circle(frameCopy, (cpX,cpY),3,(0,255,0),-1)
             
             #draw pupil circumference
-            cv2.drawContours(frameCopy,cp,-1,(0,0,255),3)
+			cv2.drawContours(frameCopy,cp,-1,(0,0,255),3)
             
             #draw corneal centre
-            cv2.circle(frameCopy, (ccX,ccY),3,(0,255,0),-1)
+			cv2.circle(frameCopy, (ccX,ccY),3,(0,255,0),-1)
             
             #draw corneal circumference
-            cv2.drawContours(frameCopy,cc,-1,(0,0,255),3)
+			cv2.drawContours(frameCopy,cc,-1,(0,0,255),3)
             #----------------------------------------------------
             #Code that will hopefully show the detected pupil, if uncommented
-            if(frameCopy != None):
-                frameC_resized = cv2.resize(frameCopy, (vidWidth, vidHeight), interpolation = cv2.INTER_AREA)
-                frameC_resized = cv2.flip(frameC_resized, 1)
-                img1 = Image.fromarray(frameC_resized)
-                imgtk1 = ImageTk.PhotoImage(image=img1)
-                videoStream1.imgtk1 = imgtk1
-                videoStream1.configure(image=imgtk1)
+			if(frameCopy != None):
+				frameC_resized = cv2.resize(frameCopy, (vidWidth, vidHeight), interpolation = cv2.INTER_AREA)
+				frameC_resized = cv2.flip(frameC_resized, 1)
+				img1 = Image.fromarray(frameC_resized)
+				imgtk1 = ImageTk.PhotoImage(image=img1)
+				videoStream1.imgtk1 = imgtk1
+				videoStream1.configure(image=imgtk1)
             
-            global moveCount; global gazeXPrev; global gazeYPrev
+			global moveCount
 			
-            if 'aOriginal' in globals() and 'bOriginal' in globals():
-                #print moveCount
-                if (moveCount == 1):
-					# Centre points of glint and pupil pass to vector
-					gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
-					ATE.move_mouse(gazeX, gazeY)
-					moveCount = 0
+			if mouseToggle:	
+				if 'aOriginal' in globals() and 'bOriginal' in globals():
+					#print moveCount
+					if (moveCount == 1):
+						# Centre points of glint and pupil pass to vector
+						gazeX, gazeY = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
+						ATE.move_mouse(gazeX, gazeY)
+						moveCount = 0
 					
-                else:
-					moveCount += 1
+					else:
+						moveCount += 1
 					
-                infoLabel.configure(text = "Now tracking your eye!")
-            else:
-                infoLabel.configure(text = "You have not calibrated yet, please do so")
+					infoLabel.configure(text = "Now tracking your eye!")
+				else:
+					infoLabel.configure(text = "You have not calibrated yet, please do so")
 
-        videoStream1.after(5, self.show_frame)
-
+		videoStream1.after(5, self.show_frame)
+	
+	def mouseControlToggle(self, event):
+		global mouseToggle
+		print 'm pressed'
+		if mouseToggle:
+			mouseToggle = False
+			print 'MCT false'
+		else:
+			mouseToggle = True
+			print 'MCT true'
     #----------------------------------------------------------------------
     #Called when quit is pressed
-    def checkQuitUser(self):
-        if (tkMessageBox.askokcancel("Quit", "Are you sure you want to quit?")):
-            self.quitUser()
-    
-    def quitUser(self):
-        cap.release()
-        cv2.destroyAllWindows()
-        self.quit()
-        self.destroy()
+	def checkQuitUser(self):
+		if (tkMessageBox.askokcancel("Quit", "Are you sure you want to quit?")):
+			self.quitUser()
+	def checkEscapeQuitUser(self, Event):
+		if (tkMessageBox.askokcancel("Quit", "Are you sure you want to quit?")):
+			self.quitUser()
+	def quitUser(self):
+		cap.release()
+		cv2.destroyAllWindows()
+		self.quit()
+		self.destroy()
         
     #----------------------------------------------------------------------
     #Called when re-calibrate button is pressed
     #Send a message to pub to start the calibration again
-    def recalibrate(self):
-        cv2.destroyAllWindows()
-        self.destroy()
-        global iteration
-        iteration = 0
-        pub.sendMessage("userFrameClosed", arg1="data")
+	def recalibrate(self):
+		cv2.destroyAllWindows()
+		self.destroy()
+		global iteration
+		iteration = 0
+		pub.sendMessage("userFrameClosed", arg1="data")
 
     #Update the frame
-    def show(self):
-        self.update()
-        self.deiconify()
-        self.show_frame()
+	def show(self):
+		self.update()
+		self.deiconify()
+		self.show_frame()
 
 ########################################################################
 ##The frame shown to the user during calibration
