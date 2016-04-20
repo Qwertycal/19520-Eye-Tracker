@@ -24,12 +24,16 @@ pointsClicked = []
 
 global scrollDownFile
 global scrollUpFile
+global scrollDownFileHighlighted
+global scrollUpFileHightlighted
 global scrollDist
 
 if (sys.platform == 'win32'):
-    scrollUpFile = 'scrollUpWindows.png'
-    scrollDownFile = 'scrollDownWindows.png'
-    scrollDist = 200
+	scrollUpFile = 'scrollUpWindows.png'
+	scrollDownFile = 'scrollDownWindows.png'
+	scrollUpFileHightlighted = 'scrollUpWindowsBlue.png'
+	scrollDownFileHighlighted = 'scrollDownWindowsBlue.png'
+	scrollDist = 200
 elif (sys.platform == 'darwin'):
     scrollUpFile = 'scrollUpMac.png'
     scrollDownFile = 'scrollDownMac.png'
@@ -109,14 +113,14 @@ def move_mouse(x1,y1):
 		pointsClicked.append(pyautogui.position())
 		spaceCount = 0
 						
-#		for k in (pyautogui.locateAllOnScreen('scrollUpWindowsBlue.png', grayscale=True)):
-#			if (x1 > (k[0] - scollBox) and x1 < (k[0] + k[2] + scollBox) and y1 > (k[1] - scollBox) and y1 < (k[1] + k[3] + scollBox)):
-#				pyautogui.scroll(200)
-#				print("Scrolled up")
-#		for l in (pyautogui.locateAllOnScreen('scrollDownWindowsBlue.png', grayscale=True)):
-#			if (x1 > (l[0] - scollBox) and x1 < (l[0] + l[2] + scollBox) and y1 > (l[1] - scollBox) and y1 < (l[1] + l[3] + scollBox)):
-#				pyautogui.scroll(-200)
-#				print("Scrolled down")
+		for k in (pyautogui.locateAllOnScreen(scrollUpFileHightlighted, grayscale=True)):
+			if (x1 > (k[0] - scollBox) and x1 < (k[0] + k[2] + scollBox) and y1 > (k[1] - scollBox) and y1 < (k[1] + k[3] + scollBox)):
+				pyautogui.scroll(scrollDist)
+				print("Scrolled up")
+		for l in (pyautogui.locateAllOnScreen(scrollDownFileHighlighted, grayscale=True)):
+			if (x1 > (l[0] - scollBox) and x1 < (l[0] + l[2] + scollBox) and y1 > (l[1] - scollBox) and y1 < (l[1] + l[3] + scollBox)):
+				pyautogui.scroll(-scrollDist)
+				print("Scrolled down")
 		for m in (pyautogui.locateAllOnScreen(scrollUpFile, grayscale=True)):
 			if (x1 > (m[0] - scollBox) and x1 < (m[0] + m[2] + scollBox) and y1 > (m[1] - scollBox) and y1 < (m[1] + m[3] + scollBox)):
 				pyautogui.scroll(scrollDist)
