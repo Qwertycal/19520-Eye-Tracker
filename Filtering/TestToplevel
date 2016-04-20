@@ -1,0 +1,21 @@
+import Tkinter as tk
+
+class App(tk.Tk):
+    def __init__(self):
+        tk.Tk.__init__(self)
+        self.button = tk.Button(self, text="Open a new window", command=self.openwindow)
+        self.button.pack()
+        self.toplevel = None
+    def openwindow(self):
+        if self.toplevel is None:
+            self.toplevel = tk.Toplevel(self)
+            self.toplevel.protocol('WM_DELETE_WINDOW', self.removewindow)
+        else:
+            self.toplevel.lift()
+
+    def removewindow(self):
+        self.toplevel.destroy()
+        self.toplevel = None
+
+app = App()
+app.mainloop()
