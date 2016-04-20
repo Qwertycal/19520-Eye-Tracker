@@ -26,8 +26,9 @@ if (sys.platform == 'win32'):
 elif (sys.platform == 'darwin'):
     scrollUpFile = 'scrollUpMac.png'
     scrollDownFile = 'scrollDownMac.png'
+    scrollUpFileHightlighted = 'scrollUpMacHighlighted.png'
+    scrollDownFileHighlighted = 'scrollDownMacHighlighted.png'
     scrollDist = 20
-
 
 def move_mouse(x1,y1):
 	spaceCount = 0

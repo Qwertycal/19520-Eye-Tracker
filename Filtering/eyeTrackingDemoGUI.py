@@ -38,10 +38,23 @@ frame_counter = 0
 aOriginal = [576.217396, -24.047559, 1.0915599, -0.221105357, -0.025469321, 0.037511114]
 bOriginal = [995.77047, -1.67122664, 12.67059, 0.018357141, 0.028264854, 0.012302]
 
+global mouseToggle
+mouseToggle = True
+
+def mouseControlToggle(self):
+    global mouseToggle
+    if mouseToggle:
+        mouseToggle = False
+        print 'MCT false'
+    else:
+        mouseToggle = True
+        print 'MCT true'
+
 #Set up the GUI
 root = Tk()
 root.title("Demo Mode")
 root.bind('<Escape>', lambda e: root.destroy())
+root.bind('m', mouseControlToggle)
 win = Toplevel(root)
 win.protocol('WM_DELETE_WINDOW', win.destroy)
 root.attributes("-fullscreen", True)
@@ -136,8 +149,10 @@ def show_frame():
         x, y = GGP.getGazePoint(aOriginal, bOriginal, cpX, cpY, ccX, ccY)
     
         # Move to coordinates on screen
-        ATE.move_mouse(x,y)
+        if mouseToggle:
+            ATE.move_mouse(x,y)
     videoStream1.after(5, show_frame)
+
 
 show_frame()
 root.mainloop()
