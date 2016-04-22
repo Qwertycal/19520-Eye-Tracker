@@ -8,7 +8,7 @@
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
-from pubsub import pub
+from pubsub import pub as Publisher
 import Tkinter as Tk
 import tkMessageBox
 from PIL import Image, ImageTk
@@ -17,6 +17,7 @@ import time
 import threading
 import sys
 import os
+import FileDialog
 
 import numpy as np
 import math
