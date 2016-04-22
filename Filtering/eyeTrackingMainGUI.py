@@ -55,16 +55,10 @@ class StartScreen(object):
         vidWidth = (screenwidth/4)
         vidHeight = (screenheight/4)
         
-		#Set up OS specific variables that alter the size of the GUI frame
-        if (sys.platform == 'win32'):
-            extraW = 4
-        elif (sys.platform == 'darwin'):
-            extraW = 82
-		
 		#Set up variables which specify the size and position of the user frame
 		#w and h set width and height of frame
 		#x and y set the position of the top corner of the frame
-        w = vidWidth + extraW
+        w = vidWidth + 4
         h = vidHeight + 60
         x = (screenwidth / 2) - (w / 2)
         y = (screenheight / 2) - (h / 2)
