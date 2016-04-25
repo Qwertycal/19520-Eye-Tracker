@@ -187,9 +187,9 @@ class StartScreen(object):
     def helpButton(self):
         print 'help button pressed'
         if (sys.platform == 'win32'):
-            os.system('start MM113_Tutorial_5_Mathematical_Modelling_in_Excel.pdf')
+            os.system('start UserGuide.pdf')
         elif (sys.platform == 'darwin'):
-            os.system('open DIS_P05.pdf')
+            os.system('open UserGuide.pdf')
 
     #---------------------------------------------------------------------
     #When the quit button is pressed
