@@ -1,9 +1,5 @@
 import numpy as np
 
-# 1366  x 768
-# 153.6
-# 76.8
-
 def calibration(pupilX, pupilY, glintX, glintY, calibrationX, calibrationY):
     "Finds the unknown values in equation for relative gaze points"
 	
@@ -27,29 +23,24 @@ def calibration(pupilX, pupilY, glintX, glintY, calibrationX, calibrationY):
                   [1, deltaX[6], deltaY[6], deltaX[6] * deltaY[6], deltaX[6]**2, deltaY[6]**2],
                   [1, deltaX[7], deltaY[7], deltaX[7] * deltaY[7], deltaX[7]**2, deltaY[7]**2],
                   [1, deltaX[8], deltaY[8], deltaX[8] * deltaY[8], deltaX[8]**2, deltaY[8]**2]]) 
-    print 'Equations matrix'
-    print a
 
 	#Answer matrix for x
 	#2nd order (6 unknowns)
     b = np.array([[calibrationX[0]], [calibrationX[1]], [calibrationX[2]], [calibrationX[3]], [calibrationX[4]], [calibrationX[5]],
     [calibrationX[6]], [calibrationX[7]], [calibrationX[8]]])
-    print 'Answer matrix for a'
-    print b
-    print 'Solutions for a'
+
+    #Perform least squares method
     solutionA = np.linalg.lstsq(a,b)
-    print solutionA[0]
-	
+    
 	#Answer matrix for y
 	#2nd order (6 unknowns)
     c = np.array([[calibrationY[0]], [calibrationY[1]], [calibrationY[2]], [calibrationY[3]], [calibrationY[4]], [calibrationY[5]],
     [calibrationY[6]], [calibrationY[7]], [calibrationY[8]]])		  
-    print 'Answer matrix for b'
-    print c
-    print 'Solutions for b'
+    
+    #Perform least squares method
     solutionB = np.linalg.lstsq(a,c)
-    print solutionB[0]
 	
+    #Return the results of the least squares method
     return (solutionA[0], solutionB[0]);
 
 
